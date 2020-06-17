@@ -10,6 +10,7 @@ import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 
 import { UserResolver } from "./models/user/resolvers";
+import { TodoResolver } from "./models/todo/resolvers";
 
 const appRouter = require("./routes/app");
 
@@ -32,7 +33,7 @@ const port = process.env.PORT || 4000;
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver, TodoResolver],
     }),
     context: ({ req, res }) => ({ req, res }),
   });

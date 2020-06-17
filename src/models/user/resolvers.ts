@@ -99,8 +99,6 @@ export class UserResolver {
       throw new Error("bad password");
     }
 
-    // login successfull
-
     sendRefreshToken(res, createRefreshToken(user));
 
     return {
