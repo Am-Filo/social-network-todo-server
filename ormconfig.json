@@ -7,11 +7,11 @@
   "database": "social-network",
   "synchronize": true,
   "logging": false,
-  "entities": ["src/entity/**/*.ts"],
+  "entities": ["src/utils/entity/**/*.ts"],
   "migrations": ["src/migration/**/*.ts"],
   "subscribers": ["src/subscriber/**/*.ts"],
   "cli": {
-    "entitiesDir": "src/entity",
+    "entitiesDir": "src/utils/entity",
     "migrationsDir": "src/migration",
     "subscribersDir": "src/subscriber"
   }

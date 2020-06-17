@@ -1,4 +1,8 @@
-# Awesome Project Build with TypeORM
+# Social Network Server
+
+### v0.0.1
+
+#### npm ^14
 
 Steps to run this project:
 

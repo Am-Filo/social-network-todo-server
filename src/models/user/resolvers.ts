@@ -1,22 +1,23 @@
 import {
-  Resolver,
-  Query,
-  Mutation,
-  Arg,
-  ObjectType,
-  Field,
-  Ctx,
-  UseMiddleware,
   Int,
+  Arg,
+  Ctx,
+  Field,
+  Query,
+  Resolver,
+  Mutation,
+  ObjectType,
+  UseMiddleware,
 } from "type-graphql";
-import { hash, compare } from "bcryptjs";
-import { User } from "./entity/User";
-import { MyContext } from "./MyContext";
-import { createAccessToken, createRefreshToken } from "./auth";
-import { isAuth } from "./isAuth";
-import { sendRefreshToken } from "./sendRefreshToken";
-import { getConnection } from "typeorm";
 import { verify } from "jsonwebtoken";
+import { getConnection } from "typeorm";
+import { hash, compare } from "bcryptjs";
+
+import { User } from "../../utils/entity/entity";
+import { isAuth } from "../../middleware/isAuth";
+import { MyContext } from "../../context";
+import { sendRefreshToken } from "../../utils/sendRefreshToken";
+import { createAccessToken, createRefreshToken } from "../../utils/auth";
 
 @ObjectType()
 class LoginResponse {
@@ -56,7 +57,7 @@ export class UserResolver {
 
     try {
       const token = authorization.split(" ")[1];
-      const payload: any = verify(token, process.env.ACCESS_TOLEN_SECRET!);
+      const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
       return User.findOne(payload.userId);
     } catch (err) {
       console.log(err);
