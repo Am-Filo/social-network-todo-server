@@ -1,8 +1,7 @@
 # Social Network Server
 
-### v0.0.1
-
-#### npm ^14
+server version `0.0.2`
+use `node ^14`
 
 Steps to run this project:
 
