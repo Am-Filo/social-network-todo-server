@@ -1,7 +1,7 @@
 import express from "express";
 import { verify } from "jsonwebtoken";
 
-import { User } from "../utils/entity/entity";
+import { User } from "../models/entity";
 import { sendRefreshToken } from "../utils/sendRefreshToken";
 import { createRefreshToken, createAccessToken } from "../utils/auth";
 
