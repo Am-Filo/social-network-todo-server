@@ -1,4 +1,3 @@
-import { Settings } from "../entity";
 import {
   Int,
   Arg,
@@ -14,11 +13,12 @@ import { hash, compare } from "bcryptjs";
 
 import { User } from "../entity";
 import { isAuth } from "../../middleware/isAuth";
+import { Profile } from "../entity";
 import { MyContext } from "../../context";
+import { ProfileInput } from "../inputs";
 import { LoginResponse } from "../types";
 import { sendRefreshToken } from "../../utils/sendRefreshToken";
 import { createAccessToken, createRefreshToken } from "../../utils/auth";
-import { SettingsInput } from "../inputs";
 
 @Resolver(User)
 export class UserResolver {
@@ -45,10 +45,13 @@ export class UserResolver {
     return User.find({ relations: ["settings"] });
   }
 
-  // Fetch all users
+  // Get user by id
   @Query(() => User)
   async userById(@Arg("id") id: number) {
-    const user = await User.findOne({ where: { id }, relations: ["settings"] });
+    const user = await User.findOne({
+      where: { id },
+      relations: ["profile"],
+    });
     console.log(user);
     return user;
   }
@@ -82,17 +85,18 @@ export class UserResolver {
   async register(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Arg("settings") settings: SettingsInput
+    @Arg("profile") profile: ProfileInput
   ) {
     const hashedPassword = await hash(password, 12);
-    const userSettings = Settings.create(settings);
 
-    await userSettings.save();
+    const userProfile = Profile.create(profile);
+
+    await userProfile.save();
 
     const user = User.create({
       email,
       password: hashedPassword,
-      settings: userSettings,
+      profile: userProfile,
     });
 
     try {

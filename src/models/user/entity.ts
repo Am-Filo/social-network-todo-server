@@ -1,3 +1,4 @@
+import { ObjectType, Field } from "type-graphql";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,9 +7,8 @@ import {
   JoinColumn,
   OneToOne,
 } from "typeorm";
-import { ObjectType, Field, Int } from "type-graphql";
 
-import { Settings } from "../entity";
+import { Profile } from "../entity";
 
 @ObjectType()
 @Entity("users")
@@ -23,14 +23,13 @@ export class User extends BaseEntity {
   @Column("text")
   password: string;
 
-  @Field(() => Int)
   @Column("int", { default: 0 })
   tokenVersion: number;
 
-  @Field(() => Settings)
-  @OneToOne(() => Settings)
+  @Field(() => Profile)
+  @OneToOne(() => Profile)
   @JoinColumn()
-  settings: Settings;
+  profile: Profile;
 
   // @OneToOne(() => Settings, (settings) => settings.user)
   // @JoinColumn()

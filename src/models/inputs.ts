@@ -1,13 +1,2 @@
-import { InputType, Field } from "type-graphql";
-
-@InputType()
-export class SettingsInput {
-  @Field({ nullable: true, defaultValue: "dark" })
-  colorScheme: string;
-
-  @Field({ nullable: true, defaultValue: "english" })
-  language: string;
-
-  @Field(() => Boolean, { nullable: true, defaultValue: true })
-  profilePrivate: boolean;
-}
+export * from "./profile/input";
+export * from "./settings/input";
