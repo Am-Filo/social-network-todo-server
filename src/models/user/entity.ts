@@ -13,7 +13,6 @@ import { Settings } from "../entity";
 @ObjectType()
 @Entity("users")
 export class User extends BaseEntity {
-  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,7 +20,6 @@ export class User extends BaseEntity {
   @Column("text")
   email: string;
 
-  @Field(() => String)
   @Column("text")
   password: string;
 
@@ -37,8 +35,4 @@ export class User extends BaseEntity {
   // @OneToOne(() => Settings, (settings) => settings.user)
   // @JoinColumn()
   // settings: Settings;
-
-  // @OneToOne(() => Settings)
-  // @JoinColumn()
-  // settingsID: Settings;
 }

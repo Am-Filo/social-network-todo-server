@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BaseEntity,
-  // OneToOne,
-} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 import { ObjectType, Field } from "type-graphql";
 
 @ObjectType()
@@ -24,9 +18,6 @@ export class Settings extends BaseEntity {
   @Field(() => Boolean)
   @Column("boolean", { nullable: true, default: true })
   profilePrivate: boolean;
-
-  // @OneToOne(() => User)
-  // user: User;
 
   // @OneToOne(() => User, (user) => user.settings)
   // user: User;
