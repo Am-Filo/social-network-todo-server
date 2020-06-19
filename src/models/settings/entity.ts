@@ -3,10 +3,9 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  OneToOne,
+  // OneToOne,
 } from "typeorm";
-import { ObjectType } from "type-graphql";
-import { User } from "../entity";
+import { ObjectType, Field } from "type-graphql";
 
 @ObjectType()
 @Entity("settings")
@@ -14,15 +13,21 @@ export class Settings extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Field(() => String)
   @Column("text", { nullable: true, default: "dark" })
   colorScheme: string;
 
+  @Field(() => String)
   @Column("text", { nullable: true, default: "english" })
   language: string;
 
+  @Field(() => Boolean)
   @Column("boolean", { nullable: true, default: true })
   profilePrivate: boolean;
 
-  @OneToOne(() => User, (user) => user.settings)
-  user: User;
+  // @OneToOne(() => User)
+  // user: User;
+
+  // @OneToOne(() => User, (user) => user.settings)
+  // user: User;
 }

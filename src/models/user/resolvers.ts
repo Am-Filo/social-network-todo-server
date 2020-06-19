@@ -47,8 +47,10 @@ export class UserResolver {
 
   // Fetch all users
   @Query(() => User)
-  userById(@Arg("id") id: number) {
-    return User.findOne({ where: { id }, relations: ["settings"] });
+  async userById(@Arg("id") id: number) {
+    const user = await User.findOne({ where: { id }, relations: ["settings"] });
+    console.log(user);
+    return user;
   }
 
   // Fetch authorize user information

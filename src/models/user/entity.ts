@@ -29,9 +29,14 @@ export class User extends BaseEntity {
   @Column("int", { default: 0 })
   tokenVersion: number;
 
-  @OneToOne(() => Settings, (settings) => settings.user)
+  @Field(() => Settings)
+  @OneToOne(() => Settings)
   @JoinColumn()
   settings: Settings;
+
+  // @OneToOne(() => Settings, (settings) => settings.user)
+  // @JoinColumn()
+  // settings: Settings;
 
   // @OneToOne(() => Settings)
   // @JoinColumn()
