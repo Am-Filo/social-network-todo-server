@@ -9,15 +9,15 @@ export class Settings extends BaseEntity {
 
   @Field(() => String)
   @Column("text", { nullable: true, default: "dark" })
-  colorScheme: string;
+  colorScheme?: string;
 
   @Field(() => String)
   @Column("text", { nullable: true, default: "english" })
-  language: string;
+  language?: string;
 
   @Field(() => Boolean)
   @Column("boolean", { nullable: true, default: true })
-  profilePrivate: boolean;
+  profilePrivate?: boolean;
 
   // @OneToOne(() => User, (user) => user.settings)
   // user: User;

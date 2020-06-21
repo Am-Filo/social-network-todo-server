@@ -27,7 +27,7 @@ export class Profile extends BaseEntity {
   @Field(() => Settings)
   @OneToOne(() => Settings)
   @JoinColumn()
-  settings: Settings;
+  settings?: Settings;
 
   // @OneToOne(() => User, (user) => user.settings)
   // user: User;

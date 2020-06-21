@@ -13,11 +13,11 @@ import { hash, compare } from "bcryptjs";
 
 import { User } from "../entity";
 import { isAuth } from "../../middleware/isAuth";
-import { Profile } from "../entity";
 import { MyContext } from "../../context";
-import { ProfileInput } from "../inputs";
 import { LoginResponse } from "../types";
 import { sendRefreshToken } from "../../utils/sendRefreshToken";
+import { Profile, Settings } from "../entity";
+import { ProfileInput, SettingsInput } from "../inputs";
 import { createAccessToken, createRefreshToken } from "../../utils/auth";
 
 @Resolver(User)
@@ -42,16 +42,24 @@ export class UserResolver {
   // Fetch all users
   @Query(() => [User])
   users() {
-    return User.find({ relations: ["settings"] });
+    return User.find({ relations: ["profile", "profile.settings"] });
   }
 
   // Get user by id
-  @Query(() => User)
-  async userById(@Arg("id") id: number) {
-    const user = await User.findOne({
-      where: { id },
-      relations: ["profile"],
+  @Query(() => [User])
+  async findUser(@Arg("id") id: number, @Arg("email") email: string) {
+    const findBy = id === 0 ? { email } : { id };
+    console.log(findBy);
+
+    const user = await User.find({
+      where: findBy,
+      relations: ["profile", "profile.settings"],
     });
+
+    if (!user || user.length === 0) {
+      throw new Error(`could not find user by ${findBy.id || findBy.email}`);
+    }
+
     console.log(user);
     return user;
   }
@@ -85,12 +93,21 @@ export class UserResolver {
   async register(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Arg("profile") profile: ProfileInput
+    @Arg("profile") profile: ProfileInput,
+    @Arg("settings") settings: SettingsInput
   ) {
+    const isExist = await User.findOne({ where: { email } });
+    if (isExist) throw new Error("this e-mail address has already taken");
+
     const hashedPassword = await hash(password, 12);
+    const profileUse: any = profile;
+
+    const userSettings = Settings.create(settings);
+    await userSettings.save();
+
+    profileUse.settings = userSettings;
 
     const userProfile = Profile.create(profile);
-
     await userProfile.save();
 
     const user = User.create({
@@ -107,6 +124,30 @@ export class UserResolver {
     }
 
     console.log(user);
+
+    return true;
+  }
+
+  // Delete user
+
+  @Mutation(() => Boolean)
+  async deleteUser(@Arg("id") id?: number, @Arg("email") email?: string) {
+    const findBy = id === 0 ? { email } : { id };
+
+    console.log(findBy);
+
+    const isExist = await User.findOne({ where: findBy });
+    if (!isExist)
+      throw new Error(`could not find user by ${findBy.id || findBy.email}`);
+
+    console.log(isExist);
+
+    try {
+      await User.delete(findBy);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
 
     return true;
   }
