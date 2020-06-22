@@ -1,4 +1,3 @@
-import { ObjectType, Field } from "type-graphql";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,6 +7,7 @@ import {
   OneToOne,
   CreateDateColumn,
 } from "typeorm";
+import { ObjectType, Field } from "type-graphql";
 
 import { Profile } from "../entity";
 

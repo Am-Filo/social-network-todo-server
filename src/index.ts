@@ -9,8 +9,7 @@ import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 
-import { UserResolver } from "./models/user/resolvers";
-import { TodoResolver } from "./models/todo/resolvers";
+import { UserResolver, TodoResolver } from "./models/resolvers";
 
 const appRouter = require("./routes/app");
 
