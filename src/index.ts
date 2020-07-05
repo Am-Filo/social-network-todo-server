@@ -20,11 +20,12 @@ const port = process.env.PORT || 4000;
 
   app.use(
     cors({
-      origin: "*",
+      origin: "http://localhost:8080",
       credentials: true,
-    }),
-    cookieParcer()
+    })
   );
+
+  app.use(cookieParcer());
 
   app.use("/", appRouter);
 
