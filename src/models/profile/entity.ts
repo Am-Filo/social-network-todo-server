@@ -8,7 +8,7 @@ import {
   JoinColumn,
 } from "typeorm";
 
-import { Settings } from "../entity";
+import { Settings, User } from "../entity";
 
 @ObjectType()
 @Entity("profile")
@@ -29,6 +29,6 @@ export class Profile extends BaseEntity {
   @JoinColumn()
   settings?: Settings;
 
-  // @OneToOne(() => User, (user) => user.settings)
-  // user: User;
+  @Field(() => User)
+  user?: User;
 }

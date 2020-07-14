@@ -38,8 +38,4 @@ export class User extends BaseEntity {
   @OneToOne(() => Profile)
   @JoinColumn()
   profile: Profile;
-
-  // @OneToOne(() => Settings, (settings) => settings.user)
-  // @JoinColumn()
-  // settings: Settings;
 }

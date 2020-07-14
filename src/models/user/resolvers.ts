@@ -39,6 +39,18 @@ export class UserResolver {
     return `your user id is:${payload!.userId}`;
   }
 
+  // Fetch all settings
+  @Query(() => [Settings])
+  settings() {
+    return Settings.find();
+  }
+
+  // Fetch all profiles
+  @Query(() => [Profile])
+  profiles() {
+    return Profile.find();
+  }
+
   // Fetch all users
   @Query(() => [User])
   users() {

@@ -1,48 +1,36 @@
-// import { MyContext } from "./../../context/index";
-import { isAuth } from "./../../middleware/isAuth";
-import {
-  Arg,
-  Query,
-  Resolver,
-  Mutation,
-  UseMiddleware,
-  // Ctx,
-} from "type-graphql";
+import { Resolver } from "type-graphql";
 
-import { Todo } from "../entity";
+// import { isAuth } from "./../../middleware/isAuth";
+// import { TodoItem } from "../entity";
 
 @Resolver()
 export class TodoResolver {
-  @Query(() => [Todo])
-  todos() {
-    return Todo.find();
-  }
-
-  @Mutation(() => Todo)
-  @UseMiddleware(isAuth)
-  async addTodo(
-    // @Ctx() { payload }: MyContext,
-    @Arg("text") text: string,
-    @Arg("complete") complete: boolean
-  ) {
-    let todoID: any;
-    let todo: any;
-
-    try {
-      await Todo.insert({
-        text: text,
-        complete: complete,
-        // authorId: payload?.userId,
-      }).then((res) => (todoID = res.raw[0].id));
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-
-    todo = await Todo.findOne({ where: { id: todoID } });
-
-    return todo;
-  }
+  //   @Query(() => [TodoItem])
+  //   todos() {
+  //     return TodoItem.find();
+  //   }
+  //   @Mutation(() => TodoItem)
+  //   @UseMiddleware(isAuth)
+  //   async addTodo(
+  //     // @Ctx() { payload }: MyContext,
+  //     @Arg("text") text: string,
+  //     @Arg("complete") complete: boolean
+  //   ) {
+  //     let todoID: any;
+  //     let todo: any;
+  //     try {
+  //       await TodoItem.insert({
+  //         text: text,
+  //         complete: complete,
+  //         // authorId: payload?.userId,
+  //       }).then((res) => (todoID = res.raw[0].id));
+  //     } catch (err) {
+  //       console.log(err);
+  //       return false;
+  //     }
+  //     todo = await TodoItem.findOne({ where: { id: todoID } });
+  //     return todo;
+  //   }
 }
 // @Service()
 // export class PostService {
@@ -60,6 +48,6 @@ export class TodoResolver {
 //       }
 //     }
 //     return Todo.find(criteria);
-//     // .limit(limit).skip(skip);
+// .limit(limit).skip(skip);
 //   }
 // }
