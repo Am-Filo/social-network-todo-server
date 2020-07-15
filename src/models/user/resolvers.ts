@@ -78,8 +78,8 @@ export class UserResolver {
     try {
       const token = authorization.split(" ")[1];
       const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
-      return User.findOne(payload.userId, {
-        relations: ["profile", "profile.settings", "profile.todos"],
+      return User.findOne(payload!.userId, {
+        relations: ["profile", "profile.user", "profile.settings"],
       });
     } catch (err) {
       console.log(err);
