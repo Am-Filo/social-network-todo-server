@@ -1,4 +1,7 @@
-# Awesome Project Build with TypeORM
+# Social Network Server
+
+server version `0.0.2`
+use `node ^14`
 
 Steps to run this project:
 

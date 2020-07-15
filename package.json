@@ -1,7 +1,7 @@
 {
   "name": "server",
-  "version": "0.0.1",
-  "description": "Awesome project developed with TypeORM.",
+  "version": "0.1.0",
+  "description": "Social Network Server",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie-parser": "^1.4.2",
@@ -12,10 +12,13 @@
     "typescript": "3.9.5"
   },
   "dependencies": {
+    "@types/cors": "^2.8.6",
     "@types/jsonwebtoken": "^8.5.0",
     "apollo-server-express": "^2.14.4",
     "bcryptjs": "^2.4.3",
+    "class-validator": "^0.12.2",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphql": "^15.1.0",
@@ -27,6 +30,7 @@
     "typeorm": "0.2.25"
   },
   "scripts": {
-    "start": "nodemon --exec ts-node src/index.ts"
+    "start": "nodemon --exec ts-node src/index.ts",
+    "rebuildDB": "dropdb social-network && createdb social-network && npm run start"
   }
 }
