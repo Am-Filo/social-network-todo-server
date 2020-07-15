@@ -8,27 +8,27 @@ import {
 import { ObjectType, Field, Int } from "type-graphql";
 import { TodoList } from "../../../models/entity";
 
-@ObjectType()
 @Entity("todoItem")
+@ObjectType()
 export class TodoItem extends BaseEntity {
-  @Field(() => Int)
   @PrimaryGeneratedColumn()
+  @Field(() => Int)
   id: number;
 
-  @Field(() => Int)
   @Column("int")
+  @Field(() => Int)
   sortID: number;
 
-  @Field(() => String)
   @Column("text", { default: "New task...", nullable: false })
+  @Field(() => String)
   title: string;
 
-  @Field(() => String)
   @Column("text", { nullable: true })
+  @Field(() => String)
   text: string;
 
-  @Field(() => Boolean)
   @Column("boolean", { default: false })
+  @Field(() => Boolean)
   complete: boolean;
 
   @Field(() => TodoList)

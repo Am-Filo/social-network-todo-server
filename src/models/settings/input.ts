@@ -9,5 +9,5 @@ export class SettingsInput {
   language: string;
 
   @Field(() => Boolean, { nullable: true, defaultValue: true })
-  profilePrivate: boolean;
+  private: boolean;
 }

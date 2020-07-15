@@ -12,7 +12,9 @@ export class SettingsResolver {
   // Fetch all settings
   @Query(() => [Settings])
   settings() {
-    return Settings.find();
+    return Settings.find({
+      relations: ["profile", "profile.user"],
+    });
   }
 
   // Get settings by id

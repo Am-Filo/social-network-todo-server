@@ -8,25 +8,27 @@ import {
 } from "typeorm";
 import { Profile } from "../entity";
 
-@ObjectType()
 @Entity("settings")
+@ObjectType()
 export class Settings extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => String)
   @Column("text", { nullable: true, default: "dark" })
+  @Field(() => String)
   colorScheme: string;
 
-  @Field(() => String)
   @Column("text", { nullable: true, default: "english" })
+  @Field(() => String)
   language: string;
 
-  @Field(() => Boolean)
   @Column("boolean", { nullable: true, default: true })
-  profilePrivate: boolean;
+  @Field(() => Boolean)
+  private: boolean;
 
+  @OneToOne(() => Profile, (profile) => profile.settings, {
+    cascade: true,
+  })
   @Field(() => Profile)
-  @OneToOne(() => Profile, (profile) => profile.settings)
   profile: Profile;
 }

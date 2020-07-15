@@ -17,7 +17,7 @@ import { MyContext } from "../../context";
 import { LoginResponse } from "../types";
 import { sendRefreshToken } from "../../utils/sendRefreshToken";
 import { Profile, Settings } from "../entity";
-import { ProfileInput, SettingsInput, UserInput } from "../inputs";
+import { ProfileInput, UserInput } from "../inputs";
 import { createAccessToken, createRefreshToken } from "../../utils/auth";
 
 @Resolver(User)
@@ -39,17 +39,11 @@ export class UserResolver {
     return `your user id is:${payload!.userId}`;
   }
 
-  // Fetch all profiles
-  @Query(() => [Profile])
-  profiles() {
-    return Profile.find();
-  }
-
   // Fetch all users
   @Query(() => [User])
   users() {
     return User.find({
-      relations: ["profile", "profile.settings", "profile.todos"],
+      relations: ["profile", "profile.user", "profile.settings"],
     });
   }
 
@@ -103,19 +97,18 @@ export class UserResolver {
   async register(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Arg("profile") profile: ProfileInput,
-    @Arg("settings") settings: SettingsInput
+    @Arg("profile") profile: ProfileInput
   ) {
     const isExist = await User.findOne({ where: { email } });
     if (isExist) throw new Error("this e-mail address has already taken");
 
     const hashedPassword = await hash(password, 12);
-    const profileUse: any = profile;
+    // const profileUse: any = profile;
 
-    const userSettings = Settings.create(settings);
+    const userSettings = Settings.create(profile.settings);
     await userSettings.save();
 
-    profileUse.settings = userSettings;
+    profile.settings = userSettings;
 
     const userProfile = Profile.create(profile);
     await userProfile.save();
@@ -125,6 +118,8 @@ export class UserResolver {
       password: hashedPassword,
       profile: userProfile,
     });
+
+    console.log(user);
 
     try {
       await user.save();

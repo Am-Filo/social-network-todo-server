@@ -7,35 +7,42 @@ import {
   OneToOne,
   JoinColumn,
   CreateDateColumn,
+  OneToMany,
+  BeforeInsert,
 } from "typeorm";
 
 import { Settings, User, TodoList } from "../entity";
 
-@ObjectType()
 @Entity("profile")
+@ObjectType()
 export class Profile extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column("text", { nullable: false })
   @Field(() => String)
-  @Column("text", { nullable: true, default: "newuser" })
   name: string;
 
+  @Column("text", { nullable: false, default: "img-placeholder.png" })
   @Field(() => String)
-  @Column("text", { nullable: true, default: "avatar-placeholder.png" })
   picture: string;
 
+  @OneToOne(() => Settings, (settings) => settings.profile, {
+    cascade: ["update"],
+  })
   @Field(() => Settings)
-  @OneToOne(() => Settings, (settings) => settings.profile)
   @JoinColumn()
   settings: Settings;
 
-  @Field(() => User)
   @OneToOne(() => User, (user) => user.profile)
+  @Field(() => User)
   user: User;
 
-  @Field(() => TodoList)
-  @OneToOne(() => TodoList)
+  @OneToMany(() => TodoList, (todos) => todos.list, {
+    lazy: true,
+    cascade: ["update", "remove"],
+  })
+  @Field(() => [TodoList])
   todos: [TodoList];
 
   @CreateDateColumn({ type: "timestamp" })
@@ -43,4 +50,9 @@ export class Profile extends BaseEntity {
 
   @CreateDateColumn({ type: "timestamp" })
   updatedAt: Date;
+
+  @BeforeInsert()
+  addId() {
+    this.name = "user_" + new Date().getTime();
+  }
 }
