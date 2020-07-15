@@ -17,7 +17,7 @@ import { MyContext } from "../../context";
 import { LoginResponse } from "../types";
 import { sendRefreshToken } from "../../utils/sendRefreshToken";
 import { Profile, Settings } from "../entity";
-import { ProfileInput, SettingsInput } from "../inputs";
+import { ProfileInput, SettingsInput, UserInput } from "../inputs";
 import { createAccessToken, createRefreshToken } from "../../utils/auth";
 
 @Resolver(User)
@@ -35,14 +35,8 @@ export class UserResolver {
   // Remove protected route by middleware isAuth
   @Query(() => String)
   @UseMiddleware(isAuth)
-  bye(@Ctx() { payload }: MyContext) {
+  secure(@Ctx() { payload }: MyContext) {
     return `your user id is:${payload!.userId}`;
-  }
-
-  // Fetch all settings
-  @Query(() => [Settings])
-  settings() {
-    return Settings.find();
   }
 
   // Fetch all profiles
@@ -54,7 +48,9 @@ export class UserResolver {
   // Fetch all users
   @Query(() => [User])
   users() {
-    return User.find({ relations: ["profile", "profile.settings"] });
+    return User.find({
+      relations: ["profile", "profile.settings", "profile.todos"],
+    });
   }
 
   // Get user by id
@@ -65,7 +61,7 @@ export class UserResolver {
 
     const user = await User.find({
       where: findBy,
-      relations: ["profile", "profile.settings"],
+      relations: ["profile", "profile.settings", "profile.todos"],
     });
 
     if (!user || user.length === 0) {
@@ -89,7 +85,7 @@ export class UserResolver {
       const token = authorization.split(" ")[1];
       const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
       return User.findOne(payload.userId, {
-        relations: ["profile", "profile.settings"],
+        relations: ["profile", "profile.settings", "profile.todos"],
       });
     } catch (err) {
       console.log(err);
@@ -164,6 +160,35 @@ export class UserResolver {
     }
 
     return true;
+  }
+
+  // Edit user
+
+  @Mutation(() => User)
+  @UseMiddleware(isAuth)
+  async editUser(
+    @Ctx() { payload }: MyContext,
+    @Arg("profile") _user: UserInput
+  ) {
+    let user = await User.findOne(payload!.userId);
+
+    console.log("before: ", user);
+
+    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
+
+    User.merge(user, _user);
+
+    try {
+      await User.save(user);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+
+    user = await User.findOne(payload!.userId);
+    console.log("after: ", user);
+
+    return user;
   }
 
   // Login

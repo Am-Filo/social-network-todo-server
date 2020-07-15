@@ -6,9 +6,10 @@ import {
   BaseEntity,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
 } from "typeorm";
 
-import { Settings, User } from "../entity";
+import { Settings, User, TodoList } from "../entity";
 
 @ObjectType()
 @Entity("profile")
@@ -25,10 +26,21 @@ export class Profile extends BaseEntity {
   picture: string;
 
   @Field(() => Settings)
-  @OneToOne(() => Settings)
+  @OneToOne(() => Settings, (settings) => settings.profile)
   @JoinColumn()
-  settings?: Settings;
+  settings: Settings;
 
   @Field(() => User)
-  user?: User;
+  @OneToOne(() => User, (user) => user.profile)
+  user: User;
+
+  @Field(() => TodoList)
+  @OneToOne(() => TodoList)
+  todos: [TodoList];
+
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
+
+  @CreateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 }

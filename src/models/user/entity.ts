@@ -22,20 +22,21 @@ export class User extends BaseEntity {
   @Column("text")
   email: string;
 
+  @Field(() => String)
   @Column("text")
   password: string;
 
   @Column("int", { default: 0 })
   tokenVersion: number;
 
+  @Field(() => Profile)
+  @OneToOne(() => Profile, (profile) => profile.user)
+  @JoinColumn()
+  profile: Profile;
+
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
 
   @CreateDateColumn({ type: "timestamp" })
   updatedAt: Date;
-
-  @Field(() => Profile)
-  @OneToOne(() => Profile)
-  @JoinColumn()
-  profile: Profile;
 }

@@ -30,7 +30,7 @@ export class TodoList extends BaseEntity {
 
   @Field(() => TodoItem)
   @OneToOne(() => TodoItem)
-  todos: [TodoItem];
+  list: [TodoItem];
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

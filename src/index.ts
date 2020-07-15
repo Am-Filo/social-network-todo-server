@@ -9,7 +9,14 @@ import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 
-import { UserResolver, TodoResolver } from "./models/resolvers";
+// const resolver = require("./models/resolvers");
+import {
+  UserResolver,
+  ProfileResolver,
+  SettingsResolver,
+  TodoListResolver,
+  TodoItemResolver,
+} from "./models/resolvers";
 
 const appRouter = require("./routes/app");
 
@@ -33,7 +40,13 @@ const port = process.env.PORT || 4000;
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, TodoResolver],
+      resolvers: [
+        UserResolver,
+        ProfileResolver,
+        SettingsResolver,
+        TodoListResolver,
+        TodoItemResolver,
+      ],
     }),
     context: ({ req, res }) => ({ req, res }),
   });

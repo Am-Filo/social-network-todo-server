@@ -1,5 +1,12 @@
 import { ObjectType, Field } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  OneToOne,
+} from "typeorm";
+import { Profile } from "../entity";
 
 @ObjectType()
 @Entity("settings")
@@ -9,16 +16,17 @@ export class Settings extends BaseEntity {
 
   @Field(() => String)
   @Column("text", { nullable: true, default: "dark" })
-  colorScheme?: string;
+  colorScheme: string;
 
   @Field(() => String)
   @Column("text", { nullable: true, default: "english" })
-  language?: string;
+  language: string;
 
   @Field(() => Boolean)
   @Column("boolean", { nullable: true, default: true })
-  profilePrivate?: boolean;
+  profilePrivate: boolean;
 
-  // @OneToOne(() => User, (user) => user.settings)
-  // user: User;
+  @Field(() => Profile)
+  @OneToOne(() => Profile, (profile) => profile.settings)
+  profile: Profile;
 }
