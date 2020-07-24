@@ -16,23 +16,11 @@ import {
   TodoListResolver,
   TodoItemResolver,
 } from "./models/resolvers";
-// import { User } from "./models/entity";
-// import { verify } from "jsonwebtoken";
 
 const http = require("http");
 const appRouter = require("./routes/app");
 
 const port = process.env.PORT || 4000;
-
-// const validateToken = (authToken) => {
-//   // ... validate token and return a Promise, rejects in case of an error
-// };
-
-// const findUser = (authToken) => {
-//   return (tokenValidationResult) => {
-//     // ... finds user by auth token and return a Promise, rejects in case of an error
-//   };
-// };
 
 (async () => {
   const app = express();
