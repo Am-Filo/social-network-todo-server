@@ -1,7 +1,38 @@
 {
   "name": "server",
-  "version": "0.1.1",
-  "description": "Social Network Server",
+  "version": "0.2.0",
+  "description": "Network Server",
+  "private": true,
+  "license": "MIT",
+  "keywords": [
+    "server",
+    "express",
+    "networt",
+    "graphql",
+    "postgres"
+  ],
+  "author": {
+    "name": "Amary Filo",
+    "email": "laumiqv@gmail.com",
+    "url": "https://github.com/laumiqv"
+  },
+  "contributors": [
+    {
+      "name": "Amary Filo",
+      "email": "laumiqv@gmail.com",
+      "url": "https://github.com/laumiqv"
+    }
+  ],
+  "bugs": "https://github.com/Am-Filo/social-network-todo-server/issues",
+  "homepage": "https://github.com/Am-Filo/social-network-todo-server/",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Am-Filo/social-network-todo-server.git"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "main": "src/index.js",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie-parser": "^1.4.2",
@@ -25,6 +56,7 @@
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.4",
     "pg": "^8.2.1",
+    "ts-node": "8.10.2",
     "reflect-metadata": "^0.1.10",
     "type-graphql": "^1.0.0-rc.2",
     "typeorm": "0.2.25"

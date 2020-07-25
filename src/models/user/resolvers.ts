@@ -2,9 +2,13 @@ import {
   Int,
   Arg,
   Ctx,
+  Root,
   Query,
+  PubSub,
   Resolver,
   Mutation,
+  Subscription,
+  PubSubEngine,
   UseMiddleware,
 } from "type-graphql";
 import { verify } from "jsonwebtoken";
@@ -22,6 +26,17 @@ import { createAccessToken, createRefreshToken } from "../../utils/auth";
 
 @Resolver(User)
 export class UserResolver {
+  /**
+   * Subscribers
+   * url: https://github.com/MichalLytek/type-graphql/blob/master/examples/simple-subscriptions/resolver.ts
+   * topic: https://typegraphql.com/docs/subscriptions.html
+   */
+
+  @Subscription({ topics: "USERADDED" })
+  newUserAdded(@Root() user: User): User {
+    return user;
+  }
+
   /**
    * Queries
    */
@@ -95,6 +110,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   async register(
+    @PubSub() pubSub: PubSubEngine,
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Arg("profile") profile: ProfileInput
@@ -123,6 +139,7 @@ export class UserResolver {
 
     try {
       await user.save();
+      await pubSub.publish("USERADDED", user);
     } catch (err) {
       console.log(err);
       return false;
