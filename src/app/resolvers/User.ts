@@ -15,14 +15,20 @@ import { verify } from "jsonwebtoken";
 import { getConnection } from "typeorm";
 import { hash, compare } from "bcryptjs";
 
-import { User } from "../entity";
 import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../../context";
-import { LoginResponse } from "../types";
+import { MyContext } from "../context";
+import { LoginResponse } from "../type/Login";
 import { sendRefreshToken } from "../../utils/sendRefreshToken";
-import { Profile, Settings } from "../entity";
-import { ProfileInput, UserInput } from "../inputs";
 import { createAccessToken, createRefreshToken } from "../../utils/auth";
+
+// entity
+import { User } from "../entity/User";
+import { Profile } from "../entity/Profile";
+import { Settings } from "../entity/Settings";
+
+// inputs
+import { UserInput } from "../inputs/User";
+import { ProfileInput } from "../inputs/Profile";
 
 @Resolver(User)
 export class UserResolver {
@@ -84,7 +90,7 @@ export class UserResolver {
   // Fetch authorize user information
   @Query(() => User, { nullable: true })
   me(@Ctx() context: MyContext) {
-    const authorization = context.req.headers["authorization"];
+    const authorization = context.req.headers.authorization;
 
     if (!authorization) {
       return null;

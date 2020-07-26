@@ -6,7 +6,8 @@ import {
   BaseEntity,
   OneToOne,
 } from "typeorm";
-import { Profile } from "../entity";
+
+import { Profile } from "./Profile";
 
 @Entity("settings")
 @ObjectType()

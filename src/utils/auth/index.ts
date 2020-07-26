@@ -1,6 +1,7 @@
 import { sign } from "jsonwebtoken";
 
-import { User } from "../../models/entity";
+// entity
+import { User } from "../../app/entity/User";
 
 export const createAccessToken = (user: User) => {
   return sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {

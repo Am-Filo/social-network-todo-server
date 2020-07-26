@@ -11,7 +11,9 @@ import {
   BeforeInsert,
 } from "typeorm";
 
-import { Settings, User, TodoList } from "../entity";
+import { User } from "./User";
+import { Settings } from "./Settings";
+import { TodoList } from "./TodoList";
 
 @Entity("profile")
 @ObjectType()

@@ -1,8 +1,10 @@
 import { Arg, Query, Resolver, UseMiddleware, Ctx } from "type-graphql";
 
-import { Profile } from "../entity";
 import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "src/context";
+import { MyContext } from "../context";
+
+// entity
+import { Profile } from "../entity/Profile";
 
 @Resolver(Profile)
 export class ProfileResolver {

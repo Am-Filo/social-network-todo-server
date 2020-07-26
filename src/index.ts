@@ -1,24 +1,22 @@
 import "dotenv/config";
 import "reflect-metadata";
 
+import http from "http";
 import cors from "cors";
 import express from "express";
 import cookieParcer from "cookie-parser";
+import appRouter from "./routes/app";
 
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 
-import {
-  UserResolver,
-  ProfileResolver,
-  SettingsResolver,
-  TodoListResolver,
-  TodoItemResolver,
-} from "./models/resolvers";
-
-const http = require("http");
-const appRouter = require("./routes/app");
+// resolvers
+import { UserResolver } from "./app/resolvers/User";
+import { ProfileResolver } from "./app/resolvers/Profile";
+import { SettingsResolver } from "./app/resolvers/Settings";
+import { TodoListResolver } from "./app/resolvers/TodoList";
+import { TodoItemResolver } from "./app/resolvers/TodoItem";
 
 const port = process.env.PORT || 4000;
 
@@ -71,7 +69,6 @@ const port = process.env.PORT || 4000;
         // throw new Error("Missing auth token!");
       },
       onDisconnect: async (_webSocket, _context) => {
-        // console.log(webSocket, context);
         console.log(`Subscription client disconnected.`);
       },
     },

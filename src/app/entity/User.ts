@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { ObjectType, Field } from "type-graphql";
 
-import { Profile } from "../entity";
+import { Profile } from "./Profile";
 
 @Entity("user")
 @ObjectType()

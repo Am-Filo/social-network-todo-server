@@ -1,12 +1,14 @@
 import {
-  EntitySubscriberInterface,
-  EventSubscriber,
   InsertEvent,
+  EventSubscriber,
+  EntitySubscriberInterface,
 } from "typeorm";
-import { User } from "./entity";
+
+// entity
+import { User } from "../entity/User";
 
 @EventSubscriber()
-export class PersonSubscriber implements EntitySubscriberInterface<[User]> {
+export class UserSubscriber implements EntitySubscriberInterface<[User]> {
   listenTo() {
     return User;
   }

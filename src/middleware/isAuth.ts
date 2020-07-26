@@ -1,12 +1,12 @@
 import { MiddlewareFn } from "type-graphql";
 import { verify } from "jsonwebtoken";
 
-import { MyContext } from "../context";
+import { MyContext } from "../app/context";
 
 // bearer 102939edadcasd3
 
 export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
-  const authorization = context.req.headers["authorization"];
+  const authorization = context.req.headers.authorization;
 
   if (!authorization) {
     throw new Error("not authenticated");

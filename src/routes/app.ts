@@ -1,9 +1,11 @@
 import express from "express";
 import { verify } from "jsonwebtoken";
 
-import { User } from "../models/entity";
 import { sendRefreshToken } from "../utils/sendRefreshToken";
 import { createRefreshToken, createAccessToken } from "../utils/auth";
+
+// entity
+import { User } from "../app/entity/User";
 
 const appRouter = express.Router();
 
@@ -52,4 +54,4 @@ appRouter.post("/refresh_token", async (req, res) => {
   });
 });
 
-module.exports = appRouter;
+export default appRouter;

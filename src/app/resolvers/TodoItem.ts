@@ -7,9 +7,11 @@ import {
   Ctx,
 } from "type-graphql";
 
-import { isAuth } from "../../../middleware/isAuth";
-import { MyContext } from "../../../context";
-import { TodoItem } from "../../../models/entity";
+import { isAuth } from "../../middleware/isAuth";
+import { MyContext } from "../context";
+
+// entity
+import { TodoItem } from "../entity/TodoItem";
 
 @Resolver(TodoItem)
 export class TodoItemResolver {
@@ -50,8 +52,8 @@ export class TodoItemResolver {
     let todo: any;
     try {
       await TodoItem.insert({
-        text: text,
-        complete: complete,
+        text,
+        complete,
         // authorId: payload?.userId,
       }).then((res) => (todoID = res.raw[0].id));
     } catch (err) {

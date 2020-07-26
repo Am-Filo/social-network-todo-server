@@ -1,6 +1,7 @@
 import { InputType, Field } from "type-graphql";
-import { SettingsInput } from "../inputs";
-import { Settings } from "../entity";
+
+import { Settings } from "../entity/Settings";
+import { SettingsInput } from "./Settings";
 
 @InputType()
 export class ProfileInput {

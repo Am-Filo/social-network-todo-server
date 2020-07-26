@@ -3,14 +3,18 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
+  OneToOne,
   CreateDateColumn,
+  ManyToOne,
 } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
-import { TodoList } from "../../../models/entity";
 
-@Entity("todoItem")
+import { Profile } from "./Profile";
+import { TodoItem } from "./TodoItem";
+
+@Entity("todoList")
 @ObjectType()
-export class TodoItem extends BaseEntity {
+export class TodoList extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
@@ -19,7 +23,7 @@ export class TodoItem extends BaseEntity {
   @Field(() => Int)
   sortID: number;
 
-  @Column("text", { default: "New task...", nullable: false })
+  @Column("text", { default: "new todo list", nullable: false })
   @Field(() => String)
   title: string;
 
@@ -27,12 +31,13 @@ export class TodoItem extends BaseEntity {
   @Field(() => String)
   text: string;
 
-  @Column("boolean", { default: false })
-  @Field(() => Boolean)
-  complete: boolean;
+  @ManyToOne(() => Profile)
+  @Field(() => Profile)
+  profile: Profile;
 
-  @Field(() => TodoList)
-  list: TodoList;
+  @OneToOne(() => TodoItem)
+  @Field(() => TodoItem)
+  list: [TodoItem];
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

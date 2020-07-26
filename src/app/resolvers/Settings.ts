@@ -1,7 +1,9 @@
 import { Arg, Query, Resolver, UseMiddleware } from "type-graphql";
 
-import { Settings } from "../entity";
 import { isAuth } from "../../middleware/isAuth";
+
+// entity
+import { Settings } from "../entity/Settings";
 
 @Resolver(Settings)
 export class SettingsResolver {

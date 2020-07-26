@@ -40,7 +40,8 @@
     "@types/graphql": "^14.5.0",
     "@types/node": "^14.0.13",
     "ts-node": "8.10.2",
-    "typescript": "3.9.5"
+    "typescript": "^3.9.7",
+    "tslint": "^6.1.2"
   },
   "dependencies": {
     "@types/cors": "^2.8.6",
@@ -52,17 +53,24 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "typescript": "^3.0.1",
     "graphql": "^15.1.0",
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.4",
     "pg": "^8.2.1",
-    "ts-node": "8.10.2",
     "reflect-metadata": "^0.1.10",
     "type-graphql": "^1.0.0-rc.2",
     "typeorm": "0.2.25"
   },
   "scripts": {
-    "start": "nodemon --exec ts-node src/index.ts",
-    "rebuildDB": "dropdb social-network && createdb social-network && npm run start"
+    "start": "node ./dist/index.js",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "rebuildDB": "dropdb social-network && createdb social-network && npm run dev",
+    "prepare": "npm run gcp-build",
+    "pretest": "npm run gcp-build",
+    "posttest": "npm run lint",
+    "gcp-build": "tsc -p .",
+    "lint": "tslint -p .",
+    "deploy": "gcloud app deploy"
   }
 }
