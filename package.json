@@ -68,6 +68,7 @@
     "rebuildDB": "dropdb social-network && createdb social-network && npm run dev",
     "prepare": "npm run gcp-build",
     "pretest": "npm run gcp-build",
+    "build": "npm run gcp-build",
     "posttest": "npm run lint",
     "gcp-build": "tsc -p .",
     "lint": "tslint -p .",
