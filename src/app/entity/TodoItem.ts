@@ -4,6 +4,7 @@ import {
   Column,
   BaseEntity,
   CreateDateColumn,
+  ManyToOne,
 } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
 
@@ -32,6 +33,7 @@ export class TodoItem extends BaseEntity {
   @Field(() => Boolean)
   complete: boolean;
 
+  @ManyToOne(() => TodoList, (todoList) => todoList.items)
   @Field(() => TodoList)
   list: TodoList;
 

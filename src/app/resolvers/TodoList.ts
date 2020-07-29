@@ -13,6 +13,10 @@ import { isAuth } from "../../middleware/isAuth";
 // entity
 import { TodoItem } from "../entity/TodoItem";
 import { TodoList } from "../entity/TodoList";
+import { Profile } from "../entity/Profile";
+
+import { TodoListInput } from "../inputs/TodoList";
+import { User } from "../entity/User";
 
 @Resolver(TodoList)
 export class TodoListResolver {
@@ -24,17 +28,16 @@ export class TodoListResolver {
   @Query(() => [TodoList])
   todoLists() {
     return TodoList.find({
-      relations: ["list"],
+      relations: ["items", "profile"],
     });
   }
 
   // Fetch all user todolists
-  @Query(() => [TodoList])
+  @Query(() => Profile)
   @UseMiddleware(isAuth)
   userTodoLists(@Ctx() { payload }: MyContext) {
-    return TodoList.find({
-      where: { id: payload!.userId },
-      relations: ["list"],
+    return Profile.findOne(payload!.userId, {
+      relations: ["todos", "todos.items"],
     });
   }
 
@@ -63,6 +66,44 @@ export class TodoListResolver {
     }
     todo = await TodoItem.findOne({ where: { id: todoID } });
     return todo;
+  }
+
+  // new createTodoList
+
+  @Mutation(() => Profile)
+  @UseMiddleware(isAuth)
+  async createTodoList(
+    @Ctx() { payload }: MyContext,
+    @Arg("todoInfo") todoInfo: TodoListInput
+  ) {
+    const user = await User.findOne(payload!.userId, {
+      relations: ["profile"],
+    });
+
+    let profile = await Profile.findOne(user!.profile.id, {
+      relations: ["user", "settings", "todos"],
+    });
+
+    if (!profile) throw new Error(`could not find user by ${payload!.userId}`);
+
+    const todoList = new TodoList();
+    todoList.sortID = 0;
+    todoList.text = todoInfo.text;
+    todoList.title = todoInfo.text;
+    todoList.profile = profile;
+
+    try {
+      await todoList.save();
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+
+    profile = await Profile.findOne(user!.profile.id, {
+      relations: ["user", "settings", "todos", "todos.items"],
+    });
+
+    return profile;
   }
 }
 // @Service()

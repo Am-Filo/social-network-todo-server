@@ -40,12 +40,11 @@ export class Profile extends BaseEntity {
   @Field(() => User)
   user: User;
 
-  @OneToMany(() => TodoList, (todos) => todos.list, {
-    lazy: true,
+  @OneToMany(() => TodoList, (todos) => todos.profile, {
     cascade: ["update", "remove"],
   })
   @Field(() => [TodoList])
-  todos: [TodoList];
+  todos: TodoList[];
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

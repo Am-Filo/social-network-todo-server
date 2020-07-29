@@ -3,9 +3,9 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  OneToOne,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
 
@@ -31,13 +31,13 @@ export class TodoList extends BaseEntity {
   @Field(() => String)
   text: string;
 
-  @ManyToOne(() => Profile)
+  @ManyToOne(() => Profile, (profile) => profile.todos)
   @Field(() => Profile)
   profile: Profile;
 
-  @OneToOne(() => TodoItem)
-  @Field(() => TodoItem)
-  list: [TodoItem];
+  @OneToMany(() => TodoItem, (todoItem) => todoItem.list)
+  @Field(() => [TodoItem])
+  items: TodoItem[];
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

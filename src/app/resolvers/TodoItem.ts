@@ -21,7 +21,7 @@ export class TodoItemResolver {
 
   // Fetch all todolists
   @Query(() => [TodoItem])
-  todoLists() {
+  todoItems() {
     return TodoItem.find({
       relations: ["list"],
     });
@@ -30,7 +30,7 @@ export class TodoItemResolver {
   // Fetch all user todolists
   @Query(() => [TodoItem])
   @UseMiddleware(isAuth)
-  userTodoLists(@Ctx() { payload }: MyContext) {
+  userTodoItems(@Ctx() { payload }: MyContext) {
     return TodoItem.find({
       where: { id: payload!.userId },
       relations: ["list"],
@@ -43,7 +43,7 @@ export class TodoItemResolver {
 
   @Mutation(() => TodoItem)
   @UseMiddleware(isAuth)
-  async addTodo(
+  async addTodoItem(
     // @Ctx() { payload }: MyContext,
     @Arg("text") text: string,
     @Arg("complete") complete: boolean
