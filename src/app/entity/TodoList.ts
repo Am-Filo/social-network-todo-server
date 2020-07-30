@@ -1,14 +1,15 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  BaseEntity,
-  CreateDateColumn,
   ManyToOne,
   OneToMany,
+  BaseEntity,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
 
+// ******* entity *******
 import { Profile } from "./Profile";
 import { TodoItem } from "./TodoItem";
 

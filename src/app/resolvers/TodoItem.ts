@@ -1,3 +1,4 @@
+import { TodoList } from "./../entity/TodoList";
 import {
   Resolver,
   Query,
@@ -7,19 +8,20 @@ import {
   Ctx,
 } from "type-graphql";
 
-import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../context";
+import { isAuth } from "../../middleware/isAuth";
 
-// entity
+// ******* entity *******
 import { TodoItem } from "../entity/TodoItem";
+
+// ******* inputs *******
+import { TodoItemInput } from "../inputs/TodoItem";
 
 @Resolver(TodoItem)
 export class TodoItemResolver {
-  /*
-    Querys
-  */
+  // ******* querys *******
 
-  // Fetch all todolists
+  // Fetch all todo items
   @Query(() => [TodoItem])
   todoItems() {
     return TodoItem.find({
@@ -27,7 +29,7 @@ export class TodoItemResolver {
     });
   }
 
-  // Fetch all user todolists
+  // Fetch all user todo items
   @Query(() => [TodoItem])
   @UseMiddleware(isAuth)
   userTodoItems(@Ctx() { payload }: MyContext) {
@@ -37,31 +39,38 @@ export class TodoItemResolver {
     });
   }
 
-  /*
-    Mutations
-  */
+  // ******* mutations *******
 
-  @Mutation(() => TodoItem)
+  @Mutation(() => TodoList)
   @UseMiddleware(isAuth)
-  async addTodoItem(
-    // @Ctx() { payload }: MyContext,
-    @Arg("text") text: string,
-    @Arg("complete") complete: boolean
+  async createTodoItem(
+    @Arg("todoListId") todoListId: number,
+    @Arg("itemInfo") todoInfo: TodoItemInput
   ) {
-    let todoID: any;
-    let todo: any;
+    let todoList = await TodoList.findOne(todoListId, {
+      relations: ["items"],
+    });
+
+    if (!todoList) throw new Error(`could not find todo list by ${todoListId}`);
+
+    const todoItem = new TodoItem();
+    todoItem.sortID = 0;
+    todoItem.title = todoInfo.title;
+    todoItem.text = todoInfo.text;
+    todoItem.list = todoList;
+
     try {
-      await TodoItem.insert({
-        text,
-        complete,
-        // authorId: payload?.userId,
-      }).then((res) => (todoID = res.raw[0].id));
+      await todoItem.save();
     } catch (err) {
       console.log(err);
       return false;
     }
-    todo = await TodoItem.findOne({ where: { id: todoID } });
-    return todo;
+
+    todoList = await TodoList.findOne(todoListId, {
+      relations: ["items"],
+    });
+
+    return todoList;
   }
 }
 // @Service()

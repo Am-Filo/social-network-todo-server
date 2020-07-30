@@ -7,22 +7,20 @@ import {
   Ctx,
 } from "type-graphql";
 
-import { MyContext } from "../context";
 import { isAuth } from "../../middleware/isAuth";
+import { MyContext } from "../context";
 
-// entity
-import { TodoItem } from "../entity/TodoItem";
-import { TodoList } from "../entity/TodoList";
-import { Profile } from "../entity/Profile";
-
-import { TodoListInput } from "../inputs/TodoList";
+// ******* entity *******
 import { User } from "../entity/User";
+import { Profile } from "../entity/Profile";
+import { TodoList } from "../entity/TodoList";
+
+// ******* inputs *******
+import { TodoListInput } from "../inputs/TodoList";
 
 @Resolver(TodoList)
 export class TodoListResolver {
-  /*
-    Querys
-  */
+  // ******* querys *******
 
   // Fetch all todolists
   @Query(() => [TodoList])
@@ -35,40 +33,17 @@ export class TodoListResolver {
   // Fetch all user todolists
   @Query(() => Profile)
   @UseMiddleware(isAuth)
-  userTodoLists(@Ctx() { payload }: MyContext) {
-    return Profile.findOne(payload!.userId, {
-      relations: ["todos", "todos.items"],
+  async userTodoLists(@Ctx() { payload }: MyContext) {
+    const user = await User.findOne(payload!.userId, {
+      relations: ["profile"],
+    });
+
+    return await Profile.findOne(user!.profile.id, {
+      relations: ["todos"],
     });
   }
 
-  /*
-    Mutations
-  */
-
-  @Mutation(() => TodoItem)
-  @UseMiddleware(isAuth)
-  async addTodo(
-    // @Ctx() { payload }: MyContext,
-    @Arg("text") text: string,
-    @Arg("complete") complete: boolean
-  ) {
-    let todoID: any;
-    let todo: any;
-    try {
-      await TodoItem.insert({
-        text,
-        complete,
-        // authorId: payload?.userId,
-      }).then((res) => (todoID = res.raw[0].id));
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-    todo = await TodoItem.findOne({ where: { id: todoID } });
-    return todo;
-  }
-
-  // new createTodoList
+  // ******* mutations *******
 
   @Mutation(() => Profile)
   @UseMiddleware(isAuth)
@@ -88,8 +63,8 @@ export class TodoListResolver {
 
     const todoList = new TodoList();
     todoList.sortID = 0;
+    todoList.title = todoInfo.title;
     todoList.text = todoInfo.text;
-    todoList.title = todoInfo.text;
     todoList.profile = profile;
 
     try {
@@ -106,22 +81,3 @@ export class TodoListResolver {
     return profile;
   }
 }
-// @Service()
-// export class PostService {
-//   getPosts({ filter, limit, skip = 0 }: TodosArgs): Promise<Todo[]> {
-//     const criteria: any = {};
-//     if (filter) {
-//       if (filter.createdAtMin) {
-//         criteria.createdAt = { $gt: filter.createdAtMin };
-//       }
-//       if (filter.completed) {
-//         criteria.complete = { $gt: filter.completed };
-//       }
-//       if (filter.authorId) {
-//         criteria.authorId = filter.authorId;
-//       }
-//     }
-//     return Todo.find(criteria);
-// .limit(limit).skip(skip);
-//   }
-// }
