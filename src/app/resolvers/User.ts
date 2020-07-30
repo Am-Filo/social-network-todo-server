@@ -21,31 +21,32 @@ import { LoginResponse } from "../type/Login";
 import { sendRefreshToken } from "../../utils/sendRefreshToken";
 import { createAccessToken, createRefreshToken } from "../../utils/auth";
 
-// entity
+// ******* entity *******
 import { User } from "../entity/User";
 import { Profile } from "../entity/Profile";
 import { Settings } from "../entity/Settings";
 
-// inputs
+// ******* inputs *******
 import { UserInput } from "../inputs/User";
 import { ProfileInput } from "../inputs/Profile";
 
 @Resolver(User)
 export class UserResolver {
   /**
-   * Subscribers
-   * url: https://github.com/MichalLytek/type-graphql/blob/master/examples/simple-subscriptions/resolver.ts
-   * topic: https://typegraphql.com/docs/subscriptions.html
+   * subscribers
+   *
+   * @see https://github.com/MichalLytek/type-graphql/blob/master/examples/simple-subscriptions/resolver.ts
+   * @see https://typegraphql.com/docs/subscriptions.html
    */
+
+  // ******* subscription *******
 
   @Subscription({ topics: "USERADDED" })
   newUserAdded(@Root() user: User): User {
     return user;
   }
 
-  /**
-   * Queries
-   */
+  // ******* querys *******
 
   // Remove test
   @Query(() => String)
@@ -76,7 +77,12 @@ export class UserResolver {
 
     const user = await User.find({
       where: findBy,
-      relations: ["profile", "profile.settings", "profile.todos"],
+      relations: [
+        "profile",
+        "profile.settings",
+        "profile.todos",
+        "profile.todos.items",
+      ],
     });
 
     if (!user || user.length === 0) {
@@ -108,9 +114,7 @@ export class UserResolver {
     }
   }
 
-  /**
-   * Mutations
-   */
+  // ******* mutations *******
 
   // Register
 

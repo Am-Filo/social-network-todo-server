@@ -8,7 +8,7 @@ module.exports = {
   password: process.env.POSTRGRES_PASSWORD,
   database: process.env.POSTRGRES_DATABASE,
   synchronize: yn(process.env.POSTRGRES_SYNCHRONIZE),
-  logging: yn(process.env.POSTRGRES_LOGGING),
+  logging: ["warn", "error", "log", "info"],
   entities: ["src/app/entity/**/*.{ts,js}"],
   migrations: ["src/app/migration/**/*.{ts,js}"],
   subscribers: ["src/app/subscriber/**/*.{ts,js}"],
