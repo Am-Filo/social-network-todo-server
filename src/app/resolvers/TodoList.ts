@@ -1,10 +1,14 @@
 import {
-  Resolver,
-  Query,
-  Mutation,
-  UseMiddleware,
   Arg,
   Ctx,
+  Root,
+  Query,
+  PubSub,
+  Resolver,
+  Mutation,
+  PubSubEngine,
+  Subscription,
+  UseMiddleware,
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
@@ -15,11 +19,25 @@ import { User } from "../entity/User";
 import { Profile } from "../entity/Profile";
 import { TodoList } from "../entity/TodoList";
 
-// ******* inputs *******
+// ******* input *******
 import { TodoListInput } from "../inputs/TodoList";
 
 @Resolver(TodoList)
 export class TodoListResolver {
+  /**
+   * subscribers
+   *
+   * @see https://github.com/MichalLytek/type-graphql/blob/master/examples/simple-subscriptions/resolver.ts
+   * @see https://typegraphql.com/docs/subscriptions.html
+   */
+
+  // ******* subscription *******
+
+  @Subscription({ topics: "ADDED_TODO_LIST" })
+  newTodoListAdded(@Root() todoList: TodoList): TodoList {
+    return todoList;
+  }
+
   // ******* querys *******
 
   // Fetch all todolists
@@ -43,11 +61,41 @@ export class TodoListResolver {
     });
   }
 
+  // Delete users todolists
+  // TODO: delete only user todoList
+  @Query(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteUserTodoLists(
+    @Ctx() { payload }: MyContext,
+    @Arg("id", () => [Number]) id: number[]
+  ) {
+    const idToDelete: number[] = [];
+
+    await User.findOne(payload!.userId).then((res) => {
+      res?.profile.todos.map((list) => {
+        if (id.includes(list.id)) idToDelete.push(list.id);
+      });
+
+      if (idToDelete.length <= 0)
+        throw new Error(`user haven't todoList with id: ${id}`);
+      else
+        console.log(`delete items with id: ${idToDelete} from origin: ${id}`);
+    });
+
+    try {
+      await TodoList.delete(idToDelete);
+    } catch (error) {
+      throw new Error(`can't delete todoLists Error: ${error}`);
+    }
+    return true;
+  }
+
   // ******* mutations *******
 
   @Mutation(() => Profile)
   @UseMiddleware(isAuth)
   async createTodoList(
+    @PubSub() pubSub: PubSubEngine,
     @Ctx() { payload }: MyContext,
     @Arg("todoInfo") todoInfo: TodoListInput
   ) {
@@ -69,6 +117,7 @@ export class TodoListResolver {
 
     try {
       await todoList.save();
+      await pubSub.publish("USERADDED", todoList);
     } catch (err) {
       console.log(err);
       return false;

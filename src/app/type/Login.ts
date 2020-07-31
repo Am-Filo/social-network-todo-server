@@ -1,6 +1,6 @@
-import { ObjectType, Field } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 
-// entity
+// ******* entity *******
 import { User } from "../entity/User";
 
 @ObjectType()

@@ -1,16 +1,17 @@
-import { ObjectType, Field } from "type-graphql";
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  BaseEntity,
   OneToOne,
-  JoinColumn,
-  CreateDateColumn,
   OneToMany,
+  JoinColumn,
+  BaseEntity,
   BeforeInsert,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
+import { Field, ObjectType } from "type-graphql";
 
+// ******* entity *******
 import { User } from "./User";
 import { Settings } from "./Settings";
 import { TodoList } from "./TodoList";
@@ -30,7 +31,8 @@ export class Profile extends BaseEntity {
   picture: string;
 
   @OneToOne(() => Settings, (settings) => settings.profile, {
-    cascade: ["update"],
+    eager: true,
+    cascade: true,
   })
   @Field(() => Settings)
   @JoinColumn()
@@ -41,7 +43,8 @@ export class Profile extends BaseEntity {
   user: User;
 
   @OneToMany(() => TodoList, (todos) => todos.profile, {
-    cascade: ["update", "remove"],
+    eager: true,
+    cascade: true,
   })
   @Field(() => [TodoList])
   todos: TodoList[];

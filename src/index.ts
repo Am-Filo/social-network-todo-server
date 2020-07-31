@@ -1,8 +1,8 @@
 import "dotenv/config";
 import "reflect-metadata";
 
-import http from "http";
 import cors from "cors";
+import http from "http";
 import express from "express";
 import cookieParcer from "cookie-parser";
 import appRouter from "./routes/app";
@@ -11,7 +11,7 @@ import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 
-// resolvers
+// ******* resolver *******
 import { UserResolver } from "./app/resolvers/User";
 import { ProfileResolver } from "./app/resolvers/Profile";
 import { SettingsResolver } from "./app/resolvers/Settings";

@@ -1,11 +1,11 @@
-import { ObjectType, Field } from "type-graphql";
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  BaseEntity,
+  Entity,
   OneToOne,
+  BaseEntity,
+  PrimaryGeneratedColumn,
 } from "typeorm";
+import { Field, ObjectType } from "type-graphql";
 
 import { Profile } from "./Profile";
 
@@ -27,9 +27,7 @@ export class Settings extends BaseEntity {
   @Field(() => Boolean)
   private: boolean;
 
-  @OneToOne(() => Profile, (profile) => profile.settings, {
-    cascade: true,
-  })
+  @OneToOne(() => Profile, (profile) => profile.settings)
   @Field(() => Profile)
   profile: Profile;
 }

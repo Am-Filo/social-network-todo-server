@@ -1,20 +1,20 @@
-import { TodoList } from "./../entity/TodoList";
 import {
-  Resolver,
-  Query,
-  Mutation,
-  UseMiddleware,
   Arg,
   Ctx,
+  Query,
+  Mutation,
+  Resolver,
+  UseMiddleware,
 } from "type-graphql";
 
-import { MyContext } from "../context";
 import { isAuth } from "../../middleware/isAuth";
+import { MyContext } from "../context";
 
 // ******* entity *******
 import { TodoItem } from "../entity/TodoItem";
+import { TodoList } from "./../entity/TodoList";
 
-// ******* inputs *******
+// ******* input *******
 import { TodoItemInput } from "../inputs/TodoItem";
 
 @Resolver(TodoItem)

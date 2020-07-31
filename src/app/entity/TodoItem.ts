@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ObjectType, Field, Int } from "type-graphql";
+import { Int, Field, ObjectType } from "type-graphql";
 
 // ******* entity *******
 import { TodoList } from "./TodoList";

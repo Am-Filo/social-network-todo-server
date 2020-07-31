@@ -1,6 +1,6 @@
-import { InputType, Field } from "type-graphql";
+import { Field, InputType } from "type-graphql";
 
-@InputType()
+@InputType("todoItem")
 export class TodoItemInput {
   @Field({ nullable: true, defaultValue: 0 })
   sortID: number;

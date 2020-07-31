@@ -1,6 +1,6 @@
 import { sign } from "jsonwebtoken";
 
-// entity
+// ******* entity *******
 import { User } from "../../app/entity/User";
 
 export const createAccessToken = (user: User) => {

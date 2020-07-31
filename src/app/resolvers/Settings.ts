@@ -2,14 +2,12 @@ import { Arg, Query, Resolver, UseMiddleware } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
 
-// entity
+// ******* entity *******
 import { Settings } from "../entity/Settings";
 
 @Resolver(Settings)
 export class SettingsResolver {
-  /**
-   * Queries
-   */
+  // ******* querys *******
 
   // Fetch all settings
   @Query(() => [Settings])
@@ -52,7 +50,5 @@ export class SettingsResolver {
     return settings;
   }
 
-  /**
-   * Mutations
-   */
+  // ******* mutations *******
 }

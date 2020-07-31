@@ -26,7 +26,7 @@ import { User } from "../entity/User";
 import { Profile } from "../entity/Profile";
 import { Settings } from "../entity/Settings";
 
-// ******* inputs *******
+// ******* input *******
 import { UserInput } from "../inputs/User";
 import { ProfileInput } from "../inputs/Profile";
 
@@ -64,32 +64,19 @@ export class UserResolver {
   // Fetch all users
   @Query(() => [User])
   users() {
-    return User.find({
-      relations: ["profile", "profile.user", "profile.settings"],
-    });
+    return User.find();
   }
 
   // Get user by id
   @Query(() => [User])
-  async findUser(@Arg("id") id: number, @Arg("email") email: string) {
+  async findUser(@Arg("id") id?: number, @Arg("email") email?: string) {
     const findBy = id === 0 ? { email } : { id };
-    console.log(findBy);
-
-    const user = await User.find({
-      where: findBy,
-      relations: [
-        "profile",
-        "profile.settings",
-        "profile.todos",
-        "profile.todos.items",
-      ],
-    });
+    const user = await User.find(findBy);
 
     if (!user || user.length === 0) {
       throw new Error(`could not find user by ${findBy.id || findBy.email}`);
     }
 
-    console.log(user);
     return user;
   }
 
@@ -105,9 +92,7 @@ export class UserResolver {
     try {
       const token = authorization.split(" ")[1];
       const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
-      return User.findOne(payload!.userId, {
-        relations: ["profile", "profile.user", "profile.settings"],
-      });
+      return User.findOne(payload!.userId);
     } catch (err) {
       console.log(err);
       return null;
@@ -126,10 +111,9 @@ export class UserResolver {
     @Arg("profile") profile: ProfileInput
   ) {
     const isExist = await User.findOne({ where: { email } });
-    if (isExist) throw new Error("this e-mail address has already taken");
+    if (isExist) throw new Error("this e-mail address has already use");
 
     const hashedPassword = await hash(password, 12);
-    // const profileUse: any = profile;
 
     const userSettings = Settings.create(profile.settings);
     await userSettings.save();
@@ -145,8 +129,6 @@ export class UserResolver {
       profile: userProfile,
     });
 
-    console.log(user);
-
     try {
       await user.save();
       await pubSub.publish("USERADDED", user);
@@ -154,8 +136,6 @@ export class UserResolver {
       console.log(err);
       return false;
     }
-
-    console.log(user);
 
     return true;
   }

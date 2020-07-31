@@ -1,14 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  BaseEntity,
-  JoinColumn,
+  Entity,
   OneToOne,
+  JoinColumn,
+  BaseEntity,
   CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
-import { ObjectType, Field } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 
+// ******* entity *******
 import { Profile } from "./Profile";
 
 @Entity("user")
@@ -29,7 +30,10 @@ export class User extends BaseEntity {
   @Column("int", { default: 0 })
   tokenVersion: number;
 
-  @OneToOne(() => Profile, (profile) => profile.user)
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    eager: true,
+    cascade: true,
+  })
   @JoinColumn()
   @Field(() => Profile)
   profile: Profile;

@@ -1,22 +1,20 @@
-import { Arg, Query, Resolver, UseMiddleware, Ctx } from "type-graphql";
+import { Arg, Ctx, Query, Resolver, UseMiddleware } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../context";
 
-// entity
+// ******* entity *******
 import { Profile } from "../entity/Profile";
 
 @Resolver(Profile)
 export class ProfileResolver {
-  /**
-   * Queries
-   */
+  // ******* querys *******
 
   // Fetch all Profiles
   @Query(() => [Profile])
   profiles() {
     return Profile.find({
-      relations: ["user", "settings"],
+      relations: ["user"],
     });
   }
 
@@ -25,7 +23,7 @@ export class ProfileResolver {
   async findProfile(@Arg("id") id: number) {
     const profile = await Profile.find({
       where: { id },
-      relations: ["profile.user", "user", "profile.settings", "settings"],
+      relations: ["profile.user"],
     });
 
     console.log(profile);
@@ -43,7 +41,7 @@ export class ProfileResolver {
   async findUserProfile(@Ctx() { payload }: MyContext) {
     const profile = await Profile.find({
       where: { id: payload!.userId },
-      relations: ["profile.user", "user", "profile.settings", "settings"],
+      relations: ["profile.user"],
     });
 
     console.log(profile);
@@ -55,7 +53,5 @@ export class ProfileResolver {
     return profile;
   }
 
-  /**
-   * Mutations
-   */
+  // ******* mutations *******
 }

@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { ObjectType, Field, Int } from "type-graphql";
+import { Int, Field, ObjectType } from "type-graphql";
 
 // ******* entity *******
 import { Profile } from "./Profile";
@@ -36,7 +36,10 @@ export class TodoList extends BaseEntity {
   @Field(() => Profile)
   profile: Profile;
 
-  @OneToMany(() => TodoItem, (todoItem) => todoItem.list)
+  @OneToMany(() => TodoItem, (todoItem) => todoItem.list, {
+    eager: true,
+    cascade: true,
+  })
   @Field(() => [TodoItem])
   items: TodoItem[];
 
