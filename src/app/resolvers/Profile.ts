@@ -1,10 +1,19 @@
-import { Arg, Ctx, Query, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Query,
+  Resolver,
+  Mutation,
+  UseMiddleware,
+} from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../context";
 
 // ******* entity *******
+import { User } from "../entity/User";
 import { Profile } from "../entity/Profile";
+import { ProfileInput } from "../inputs/Profile";
 
 @Resolver(Profile)
 export class ProfileResolver {
@@ -54,4 +63,34 @@ export class ProfileResolver {
   }
 
   // ******* mutations *******
+
+  // Edit user profile
+
+  @Mutation(() => Profile)
+  @UseMiddleware(isAuth)
+  async editUserProfile(
+    @Ctx() { payload }: MyContext,
+    @Arg("profile") _profile: ProfileInput
+  ) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) throw new Error(`can't find user by ${payload!.userId}`);
+
+    let profile = await Profile.findOne(user.profile.id);
+
+    if (!profile) throw new Error(`can't find profile by ${user.profile.id}`);
+
+    Profile.merge(profile, _profile);
+
+    try {
+      await Profile.save(profile);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+
+    profile = await Profile.findOne(user.profile.id, { relations: ["user"] });
+
+    return profile;
+  }
 }

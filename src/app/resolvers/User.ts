@@ -115,10 +115,11 @@ export class UserResolver {
 
     const hashedPassword = await hash(password, 12);
 
-    const userSettings = Settings.create(profile.settings);
-    await userSettings.save();
-
-    profile.settings = userSettings;
+    if (profile.settings) {
+      const userSettings = Settings.create(profile.settings);
+      await userSettings.save();
+      profile.settings = userSettings;
+    }
 
     const userProfile = Profile.create(profile);
     await userProfile.save();
@@ -168,13 +169,8 @@ export class UserResolver {
 
   @Mutation(() => User)
   @UseMiddleware(isAuth)
-  async editUser(
-    @Ctx() { payload }: MyContext,
-    @Arg("profile") _user: UserInput
-  ) {
+  async editUser(@Ctx() { payload }: MyContext, @Arg("user") _user: UserInput) {
     let user = await User.findOne(payload!.userId);
-
-    console.log("before: ", user);
 
     if (!user) throw new Error(`could not find user by ${payload!.userId}`);
 
@@ -188,7 +184,6 @@ export class UserResolver {
     }
 
     user = await User.findOne(payload!.userId);
-    console.log("after: ", user);
 
     return user;
   }

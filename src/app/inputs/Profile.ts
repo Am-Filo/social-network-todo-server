@@ -9,11 +9,11 @@ import { SettingsInput } from "./Settings";
 @InputType("profile")
 export class ProfileInput {
   @Field({ nullable: true, defaultValue: "usernname" })
-  name: string;
+  name?: string;
 
   @Field({ nullable: true, defaultValue: "picture" })
-  picture: string;
+  picture?: string;
 
-  @Field(() => SettingsInput)
-  settings: Settings;
+  @Field(() => SettingsInput, { nullable: true })
+  settings?: Settings;
 }
