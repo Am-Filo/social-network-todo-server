@@ -6,11 +6,14 @@ export class TodoListInput {
   sortID: number;
 
   @Field({ nullable: true, defaultValue: "New Todo List" })
-  title: string;
+  title?: string;
 
   @Field({
     nullable: true,
     defaultValue: "Write something about this list here",
   })
-  text: string;
+  text?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  private?: boolean;
 }

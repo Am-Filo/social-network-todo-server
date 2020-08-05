@@ -48,24 +48,17 @@ export class ProfileResolver {
   @UseMiddleware(isAuth)
   @Query(() => Profile)
   async findUserProfile(@Ctx() { payload }: MyContext) {
-    const profile = await Profile.find({
-      where: { id: payload!.userId },
-      relations: ["profile.user"],
-    });
+    const user = await User.findOne(payload!.userId);
 
-    console.log(profile);
+    if (!user)
+      throw new Error(`can't find user profile by userId ${payload!.userId}`);
 
-    if (!profile || profile.length === 0) {
-      throw new Error(`could not find user by ${payload!.userId}`);
-    }
-
-    return profile;
+    return user?.profile ? user?.profile : null;
   }
 
   // ******* mutations *******
 
   // Edit user profile
-
   @Mutation(() => Profile)
   @UseMiddleware(isAuth)
   async editUserProfile(
@@ -85,8 +78,17 @@ export class ProfileResolver {
     try {
       await Profile.save(profile);
     } catch (err) {
-      console.log(err);
-      return false;
+      console.log(
+        `can't update user profile (userId: ${payload!.userId}, profileId: ${
+          user.profile.id
+        })`,
+        err
+      );
+      throw new Error(
+        `can't update user profile (userId: ${payload!.userId}, profileId: ${
+          user.profile.id
+        })`
+      );
     }
 
     profile = await Profile.findOne(user.profile.id, { relations: ["user"] });

@@ -48,13 +48,13 @@ export class UserResolver {
 
   // ******* querys *******
 
-  // Remove test
+  // ! Remove test
   @Query(() => String)
   hello() {
     return "hi!";
   }
 
-  // Remove protected route by middleware isAuth
+  // ! Remove protected route by middleware isAuth
   @Query(() => String)
   @UseMiddleware(isAuth)
   secure(@Ctx() { payload }: MyContext) {
@@ -102,7 +102,6 @@ export class UserResolver {
   // ******* mutations *******
 
   // Register
-
   @Mutation(() => Boolean)
   async register(
     @PubSub() pubSub: PubSubEngine,
@@ -141,55 +140,7 @@ export class UserResolver {
     return true;
   }
 
-  // Delete user
-
-  @Mutation(() => Boolean)
-  async deleteUser(@Arg("id") id?: number, @Arg("email") email?: string) {
-    const findBy = id === 0 ? { email } : { id };
-
-    console.log(findBy);
-
-    const isExist = await User.findOne({ where: findBy });
-    if (!isExist)
-      throw new Error(`could not find user by ${findBy.id || findBy.email}`);
-
-    console.log(isExist);
-
-    try {
-      await User.delete(findBy);
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-
-    return true;
-  }
-
-  // Edit user
-
-  @Mutation(() => User)
-  @UseMiddleware(isAuth)
-  async editUser(@Ctx() { payload }: MyContext, @Arg("user") _user: UserInput) {
-    let user = await User.findOne(payload!.userId);
-
-    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
-
-    User.merge(user, _user);
-
-    try {
-      await User.save(user);
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-
-    user = await User.findOne(payload!.userId);
-
-    return user;
-  }
-
   // Login
-
   @Mutation(() => LoginResponse)
   async login(
     @Arg("email") email: string,
@@ -216,6 +167,7 @@ export class UserResolver {
     };
   }
 
+  // Logout
   @Mutation(() => Boolean)
   async logout(@Ctx() { res }: MyContext) {
     sendRefreshToken(res, "");
@@ -223,8 +175,52 @@ export class UserResolver {
     return true;
   }
 
-  // Revorkere fresh tokens for user
+  // Edit user
+  @Mutation(() => User)
+  @UseMiddleware(isAuth)
+  async editUser(@Ctx() { payload }: MyContext, @Arg("user") _user: UserInput) {
+    let user = await User.findOne(payload!.userId);
 
+    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
+
+    User.merge(user, _user);
+
+    try {
+      await User.save(user);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+
+    user = await User.findOne(payload!.userId);
+
+    return user;
+  }
+
+  // Delete user
+  @Mutation(() => Boolean)
+  async deleteUser(@Arg("id") id?: number, @Arg("email") email?: string) {
+    const findBy = id === 0 ? { email } : { id };
+
+    console.log(findBy);
+
+    const isExist = await User.findOne({ where: findBy });
+    if (!isExist)
+      throw new Error(`could not find user by ${findBy.id || findBy.email}`);
+
+    console.log(isExist);
+
+    try {
+      await User.delete(findBy);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+
+    return true;
+  }
+
+  // Revorkere fresh tokens for user
   @Mutation(() => Boolean)
   async revorkerefreshTokensForUser(@Arg("userId", () => Int) userId: number) {
     await getConnection()

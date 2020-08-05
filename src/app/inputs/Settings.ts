@@ -2,12 +2,12 @@ import { Field, InputType } from "type-graphql";
 
 @InputType("settings")
 export class SettingsInput {
-  @Field({ nullable: true, defaultValue: "dark" })
+  @Field({ nullable: true })
   colorScheme: string;
 
-  @Field({ nullable: true, defaultValue: "english" })
+  @Field({ nullable: true })
   language: string;
 
-  @Field(() => Boolean, { nullable: true, defaultValue: true })
-  private: boolean;
+  @Field(() => Boolean, { nullable: true })
+  private?: boolean;
 }

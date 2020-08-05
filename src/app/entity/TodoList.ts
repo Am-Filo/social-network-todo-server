@@ -24,7 +24,7 @@ export class TodoList extends BaseEntity {
   @Field(() => Int)
   sortID: number;
 
-  @Column("text", { default: "new todo list", nullable: false })
+  @Column("text", { default: "New todo list", nullable: false })
   @Field(() => String)
   title: string;
 
@@ -36,9 +36,15 @@ export class TodoList extends BaseEntity {
   @Field(() => Profile)
   profile: Profile;
 
+  @Column("boolean", { default: false })
+  @Field(() => Boolean)
+  private: boolean;
+
   @OneToMany(() => TodoItem, (todoItem) => todoItem.list, {
     eager: true,
     cascade: true,
+    onDelete: "CASCADE",
+    nullable: true,
   })
   @Field(() => [TodoItem])
   items: TodoItem[];

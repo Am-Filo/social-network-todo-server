@@ -38,6 +38,9 @@ export class User extends BaseEntity {
   @Field(() => Profile)
   profile: Profile;
 
+  @Column("boolean", { default: false })
+  confirm: boolean;
+
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;
 
