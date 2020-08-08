@@ -5,12 +5,16 @@ import {
   Mutation,
   Resolver,
   UseMiddleware,
+  // PubSubEngine,
+  // PubSub,
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../context";
 
 // ******* entity *******
+import { User } from "../entity/User";
+import { Profile } from "../entity/Profile";
 import { TodoItem } from "../entity/TodoItem";
 import { TodoList } from "./../entity/TodoList";
 
@@ -20,14 +24,6 @@ import { TodoItemInput } from "../inputs/TodoItem";
 @Resolver(TodoItem)
 export class TodoItemResolver {
   // ******* querys *******
-
-  // Fetch all todo items
-  @Query(() => [TodoItem])
-  todoItems() {
-    return TodoItem.find({
-      relations: ["list"],
-    });
-  }
 
   // Fetch all user todo items
   @Query(() => [TodoItem])
@@ -41,15 +37,40 @@ export class TodoItemResolver {
 
   // ******* mutations *******
 
+  // Create user todo item for todo list
   @Mutation(() => TodoList)
   @UseMiddleware(isAuth)
   async createTodoItem(
+    // @PubSub() pubSub: PubSubEngine,
+    @Ctx() { payload }: MyContext,
     @Arg("todoListId") todoListId: number,
     @Arg("itemInfo") todoInfo: TodoItemInput
   ) {
-    let todoList = await TodoList.findOne(todoListId, {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
+
+    const profile = await Profile.findOne(user!.profile.id);
+
+    if (!profile)
+      throw new Error(`could not find user profile by ${user!.profile.id}`);
+
+    let todoList = await TodoList.find({
+      where: {
+        profile: {
+          id: user!.profile.id,
+        },
+      },
       relations: ["items"],
-    });
+    })
+      .then((res) => {
+        return res.find((t) => {
+          return t.id === todoListId;
+        });
+      })
+      .catch((err) => {
+        throw new Error(`something went wrong: ${err}`);
+      });
 
     if (!todoList) throw new Error(`could not find todo list by ${todoListId}`);
 
@@ -72,7 +93,69 @@ export class TodoItemResolver {
 
     return todoList;
   }
+
+  // Delete user todo items in todo list
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteTodoItem(
+    // @PubSub() pubSub: PubSubEngine,
+    @Ctx() { payload }: MyContext,
+    @Arg("todoListId") todoListId: number,
+    @Arg("id", () => [Number]) id: number[]
+  ) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
+
+    const profile = await Profile.findOne(user!.profile.id);
+
+    if (!profile)
+      throw new Error(`could not find user profile by ${user!.profile.id}`);
+
+    const todoList = await TodoList.find({
+      where: {
+        profile: {
+          id: user!.profile.id,
+        },
+      },
+      relations: ["items"],
+    })
+      .then((res) => {
+        return res.find((t) => {
+          return t.id === todoListId;
+        });
+      })
+      .catch((err) => {
+        throw new Error(`something went wrong: ${err}`);
+      });
+
+    if (!todoList) throw new Error(`could not find todo list by ${todoListId}`);
+
+    const idToDelete: number[] = [];
+
+    todoList.items.map((item) => {
+      if (id.includes(item.id)) idToDelete.push(item.id);
+    });
+
+    if (idToDelete.length <= 0)
+      throw new Error(
+        `user haven't todo items in todo list id: ${todoListId}, with items id: ${id}`
+      );
+    else
+      console.log(
+        `delete items with id: ${idToDelete} from origin: ${id} in todo list id: ${todoListId}`
+      );
+
+    try {
+      await TodoItem.delete(idToDelete);
+    } catch (error) {
+      throw new Error(`can't delete todo list items Error: ${error}`);
+    }
+
+    return true;
+  }
 }
+
 // @Service()
 // export class PostService {
 //   getPosts({ filter, limit, skip = 0 }: TodosArgs): Promise<Todo[]> {

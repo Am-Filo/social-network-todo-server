@@ -72,6 +72,9 @@ export class TodoListResolver {
   @Query(() => [TodoList])
   todoLists() {
     return TodoList.find({
+      where: {
+        private: false,
+      },
       relations: ["items", "profile"],
     });
   }
@@ -105,7 +108,8 @@ export class TodoListResolver {
 
     const profile = await Profile.findOne(user!.profile.id);
 
-    if (!profile) throw new Error(`could not find user by ${payload!.userId}`);
+    if (!profile)
+      throw new Error(`could not find user profile by ${user!.profile.id}`);
 
     const todoList = new TodoList();
     todoList.sortID = 0;
