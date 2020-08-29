@@ -184,6 +184,52 @@ export class TodoListResolver {
     return todoList;
   }
 
+  // Reorder user todo list in todo list
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async reorderTodoItem(
+    @Ctx() { payload }: MyContext,
+    @Arg("reorderTodoItems") reorderTodoLists: any[]
+  ) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
+
+    const profile = await Profile.findOne(user!.profile.id);
+
+    if (!profile)
+      throw new Error(`could not find user profile by ${user!.profile.id}`);
+
+    const toFindListId: any = [];
+
+    reorderTodoLists.map(t => {
+      toFindListId.push(t.id)
+    });
+
+    const toReorderTodoLists: any = [];
+
+    await User.findOne(payload!.userId).then((res) => {
+      res?.profile.todos.map((list) => {
+        if (toFindListId.includes(list.id)) toReorderTodoLists.push(reorderTodoLists.find(i => i.id  === list.id));
+      });
+
+      if (toReorderTodoLists.length <= 0)
+        throw new Error(`user haven't todoList with id: ${toReorderTodoLists}`);
+      else
+        console.log(`reorder items with id: ${toReorderTodoLists} from origin: ${reorderTodoLists}`);
+    });
+
+    toReorderTodoLists.map(async (item: any) => {
+      try {
+        await TodoList.update(item.id, { sortID: item.sort });
+      } catch (error) {
+        throw new Error(`can't delete todo list items Error: ${error}`);
+      }
+    })
+
+    return true;
+  }
+
   // Delete user todo list
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)

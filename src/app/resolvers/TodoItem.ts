@@ -154,6 +154,102 @@ export class TodoItemResolver {
 
     return true;
   }
+
+  // Reorder user todo items in todo list
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async reorderTodoItem(
+    // @PubSub() pubSub: PubSubEngine,
+    @Ctx() { payload }: MyContext,
+    @Arg("todoListId") todoListId: number,
+    @Arg("reorderTodoItems") reorderTodoItems: any[]
+  ) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
+
+    const profile = await Profile.findOne(user!.profile.id);
+
+    if (!profile)
+      throw new Error(`could not find user profile by ${user!.profile.id}`);
+
+    const todoList = await TodoList.find({
+      where: {
+        profile: {
+          id: user!.profile.id,
+        },
+      },
+      relations: ["items"],
+    })
+      .then((res) => {
+        return res.find((t) => {
+          return t.id === todoListId;
+        });
+      })
+      .catch((err) => {
+        throw new Error(`something went wrong: ${err}`);
+      });
+
+    if (!todoList) throw new Error(`could not find todo list by ${todoListId}`);
+
+    reorderTodoItems.map(async item => {
+      try {
+        await TodoItem.update(item.id, { sortID: item.sort });
+      } catch (error) {
+        throw new Error(`can't delete todo list items Error: ${error}`);
+      }
+    })
+
+    return true;
+  }
+
+  // Reorder user one todo item in todo list
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async reorderOneTodoItem(
+    // @PubSub() pubSub: PubSubEngine,
+    @Ctx() { payload }: MyContext,
+    @Arg("todoListId", () => Number) todoListId: number,
+    @Arg("reorderTodoItems", () => Number) reorderTodoItemId: number,
+    @Arg("reorderTodoItems", () => Number) reorderTodoItemSortId: number
+  ) {
+    const user = await User.findOne(payload!.userId);
+
+    if (!user) throw new Error(`could not find user by ${payload!.userId}`);
+
+    const profile = await Profile.findOne(user!.profile.id);
+
+    if (!profile)
+      throw new Error(`could not find user profile by ${user!.profile.id}`);
+
+    const todoList = await TodoList.find({
+      where: {
+        profile: {
+          id: user!.profile.id,
+        },
+      },
+      relations: ["items"],
+    })
+      .then((res) => {
+        return res.find((t) => {
+          return t.id === todoListId;
+        });
+      })
+      .catch((err) => {
+        throw new Error(`something went wrong: ${err}`);
+      });
+
+    if (!todoList) throw new Error(`could not find todo list by ${todoListId}`);
+
+    const todoItem = await TodoItem.findOne(reorderTodoItemId);
+    const saveTodoItemSortId = todoItem!.sortID;
+    const findTodoItemBySortId = todoList.items.find(t => t.sortID  === saveTodoItemSortId)!.id;
+
+    await TodoItem.update(findTodoItemBySortId, { sortID: saveTodoItemSortId });
+    await TodoItem.update(reorderTodoItemId, { sortID: reorderTodoItemSortId });
+
+    return true;
+  }
 }
 
 // @Service()
