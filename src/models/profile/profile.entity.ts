@@ -5,7 +5,7 @@ import {
   OneToMany,
   JoinColumn,
   BaseEntity,
-  BeforeInsert,
+  // BeforeInsert,
   CreateDateColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -55,8 +55,8 @@ export class Profile extends BaseEntity {
   @CreateDateColumn({ type: "timestamp" })
   updatedAt: Date;
 
-  @BeforeInsert()
-  addId() {
-    this.name = "user_" + new Date().getTime();
-  }
+  // @BeforeInsert()
+  // addId() {
+  //   this.name = "user_" + new Date().getTime();
+  // }
 }

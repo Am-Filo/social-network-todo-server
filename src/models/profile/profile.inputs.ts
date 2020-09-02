@@ -8,10 +8,10 @@ import { SettingsInput } from "../settings/settings.inputs";
 
 @InputType("profile")
 export class ProfileInput {
-  @Field({ nullable: true, defaultValue: "usernname" })
+  @Field({ nullable: true, defaultValue: "user_" + new Date().getTime() })
   name?: string;
 
-  @Field({ nullable: true, defaultValue: "picture" })
+  @Field({ nullable: true, defaultValue: "placeholder.png" })
   picture?: string;
 
   @Field(() => SettingsInput, { nullable: true })

@@ -15,7 +15,7 @@ export class Settings extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("text", { nullable: true, default: "dark" })
+  @Column("text", { nullable: true, default: "white" })
   @Field(() => String)
   colorScheme: string;
 

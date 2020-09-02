@@ -26,8 +26,7 @@ import { Profile } from "../profile/profile.entity";
 import { Settings } from "../settings/settings.entity";
 
 // ******* input *******
-import { UserInput } from "./user.inputs";
-import { ProfileInput } from "../profile/profile.inputs";
+import { CreateUserInput, EditUserInput } from "./user.inputs";
 
 @Resolver(User)
 export class UserResolver {
@@ -92,26 +91,24 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async register(
     @PubSub() pubSub: PubSubEngine,
-    @Arg("email") email: string,
-    @Arg("password") password: string,
-    @Arg("profile") profile: ProfileInput
+    @Arg("data", () => CreateUserInput) registerData: CreateUserInput
   ) {
-    const isExist = await User.findOne({ where: { email } });
+    const isExist = await User.findOne({ where: { email: registerData.email } });
     if (isExist) throw new Error("this e-mail address has already use");
 
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await hash(registerData.password, 12);
 
-    if (profile.settings) {
-      const userSettings = Settings.create(profile.settings);
-      await userSettings.save();
-      profile.settings = userSettings;
-    }
+    console.log(registerData);
 
-    const userProfile = Profile.create(profile);
+    const userSettings = Settings.create(registerData.profile.settings);
+    await userSettings.save();
+    registerData.profile.settings = userSettings;
+
+    const userProfile = Profile.create(registerData.profile);
     await userProfile.save();
 
     const user = User.create({
-      email,
+      email: registerData.email,
       password: hashedPassword,
       profile: userProfile,
     });
@@ -165,7 +162,7 @@ export class UserResolver {
   // Edit user
   @Mutation(() => User)
   @UseMiddleware(isAuth)
-  async editUser(@Ctx() { payload }: MyContext, @Arg("user") _user: UserInput) {
+  async editUser(@Ctx() { payload }: MyContext, @Arg("user") _user: EditUserInput) {
     let user = await User.findOne(payload!.userId);
 
     if (!user) throw new Error(`could not find user by ${payload!.userId}`);
