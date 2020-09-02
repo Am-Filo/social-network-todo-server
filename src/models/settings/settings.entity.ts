@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 
-import { Profile } from "./Profile";
+import { Profile } from "../profile/profile.entity";
 
 @Entity("settings")
 @ObjectType()

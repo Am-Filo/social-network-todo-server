@@ -1,7 +1,7 @@
 import { verify } from "jsonwebtoken";
 import { MiddlewareFn } from "type-graphql";
 
-import { MyContext } from "../app/context";
+import { MyContext } from "../helpers/context";
 
 /**
  * @description token type

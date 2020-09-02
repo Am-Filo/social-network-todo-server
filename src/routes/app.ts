@@ -1,11 +1,12 @@
-import express from "express";
+// import * as express from "express"
+import express from "express"
 import { verify } from "jsonwebtoken";
 
-import { sendRefreshToken } from "../utils/sendRefreshToken";
-import { createRefreshToken, createAccessToken } from "../utils/auth";
+import { sendRefreshToken } from "../helpers/sendRefreshToken";
+import { createRefreshToken, createAccessToken } from "../helpers/auth";
 
 // ******* entity *******
-import { User } from "../app/entity/User";
+import { User } from "../models/user/user.entity";
 
 const appRouter = express.Router();
 

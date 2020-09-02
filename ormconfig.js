@@ -9,12 +9,12 @@ module.exports = {
   database: process.env.POSTRGRES_DATABASE,
   synchronize: yn(process.env.POSTRGRES_SYNCHRONIZE),
   logging: ["warn", "error", "log", "info"],
-  entities: ["src/app/entity/**/*.{ts,js}"],
-  migrations: ["src/app/migration/**/*.{ts,js}"],
-  subscribers: ["src/app/subscriber/**/*.{ts,js}"],
+  entities: ["src/models/**/*.entity.{ts,js}"],
+  migrations: ["src/migration/**/*.{ts,js}"],
+  subscribers: ["src/models/**/*.subscriber.{ts,js}"],
   cli: {
-    entitiesDir: "src/app/entity",
-    migrationsDir: "src/app/migration",
-    subscribersDir: "src/app/subscriber",
+    entitiesDir: "src/models",
+    migrationsDir: "src/migration",
+    subscribersDir: "src/models",
   },
 };

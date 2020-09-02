@@ -16,19 +16,19 @@ import { getConnection } from "typeorm";
 import { hash, compare } from "bcryptjs";
 
 import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../context";
-import { LoginResponse } from "../type/Login";
-import { sendRefreshToken } from "../../utils/sendRefreshToken";
-import { createAccessToken, createRefreshToken } from "../../utils/auth";
+import { MyContext } from "../../helpers/context";
+import { LoginResponse } from "./user.types";
+import { sendRefreshToken } from "../../helpers/sendRefreshToken";
+import { createAccessToken, createRefreshToken } from "../../helpers/auth";
 
 // ******* entity *******
-import { User } from "../entity/User";
-import { Profile } from "../entity/Profile";
-import { Settings } from "../entity/Settings";
+import { User } from "./user.entity";
+import { Profile } from "../profile/profile.entity";
+import { Settings } from "../settings/settings.entity";
 
 // ******* input *******
-import { UserInput } from "../inputs/User";
-import { ProfileInput } from "../inputs/Profile";
+import { UserInput } from "./user.inputs";
+import { ProfileInput } from "../profile/profile.inputs";
 
 @Resolver(User)
 export class UserResolver {

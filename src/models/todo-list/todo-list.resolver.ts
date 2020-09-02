@@ -12,18 +12,18 @@ import {
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../context";
+import { MyContext } from "../../helpers/context";
 
 // ******* entity *******
-import { User } from "../entity/User";
-import { Profile } from "../entity/Profile";
-import { TodoList } from "../entity/TodoList";
+import { User } from "../user/user.entity";
+import { Profile } from "../profile/profile.entity";
+import { TodoList } from "../todo-list/todo-list.entity";
 
 // ******* input *******
-import { TodoListInput } from "../inputs/TodoList";
+import { TodoListInput, ReorderTodoListInputs } from "./todo-list.inputs";
 
 // ******* types *******
-import { TodoListSubscriber } from "../type/TodoListSubscriber";
+import { TodoListSubscriber } from "./todo-list.types";
 
 @Resolver(TodoList)
 export class TodoListResolver {
@@ -189,7 +189,7 @@ export class TodoListResolver {
   @UseMiddleware(isAuth)
   async reorderTodoItem(
     @Ctx() { payload }: MyContext,
-    @Arg("reorderTodoItems") reorderTodoLists: any[]
+    @Arg("reorderData", () => [ReorderTodoListInputs]) reorderTodoLists: [ReorderTodoListInputs]
   ) {
     const user = await User.findOne(payload!.userId);
 
@@ -198,6 +198,10 @@ export class TodoListResolver {
     const profile = await Profile.findOne(user!.profile.id);
 
     if (!profile)
+      throw new Error(`could not find user profile by ${user!.profile.id}`);
+
+
+    if (!reorderTodoLists)
       throw new Error(`could not find user profile by ${user!.profile.id}`);
 
     const toFindListId: any = [];

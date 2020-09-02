@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
-    "lib": ["dom", "es5", "es6", "es2017", "es2020", "esnext.asynciterable"],
+    // "module": "commonjs",
+    // "lib": ["dom", "es5", "es6", "es2017", "es2020", "esnext.asynciterable"],
     "sourceMap": true,
     "outDir": "./dist",
     "moduleResolution": "node",
@@ -25,6 +25,55 @@
   "exclude": ["node_modules"],
   "include": ["./src/**/*.tsx", "./src/**/*.ts"]
 }
+
+// {
+//   "compilerOptions": {
+//     "moduleResolution": "node",
+//     "target": "es6",
+//     "module": "commonjs",
+//     // "lib": ["es6"],
+//     "strict": true,
+//     "sourceMap": true,
+//     "declaration": true,
+//     "esModuleInterop": true,
+//     "allowSyntheticDefaultImports": true,
+//     "experimentalDecorators": true,
+//     "emitDecoratorMetadata": true,
+//     "declarationDir": "./dist",
+//     "outDir": "./dist",
+//     "typeRoots": ["./node_modules/@types"]
+//   },
+//   "include": ["./src/**/*.tsx", "./src/**/*.ts"],
+//   "exclude": ["node_modules"]
+// }
+// {
+//   "compilerOptions": {
+//     "target": "es6",
+//     "module": "commonjs",
+//     // "lib": ["dom", "es5", "es6", "es2017", "es2020", "esnext.asynciterable"],
+//     "sourceMap": true,
+//     "outDir": "./dist",
+//     "removeComments": true,
+//     "moduleResolution": "node",
+//     "noImplicitAny": false,
+//     "strictNullChecks": true,
+//     "strictFunctionTypes": true,
+//     "noImplicitThis": true,
+//     "noUnusedLocals": true,
+//     "noUnusedParameters": true,
+//     "noImplicitReturns": true,
+//     "noFallthroughCasesInSwitch": true,
+//     "declaration": true,
+
+//     //add decorator support
+//     "allowSyntheticDefaultImports": true,
+//     "emitDecoratorMetadata": true,
+//     "experimentalDecorators": true,
+//     "esModuleInterop": true
+//   },
+//   "include": ["./src/**/*.tsx", "./src/**/*.ts"],
+//   "exclude": ["node_modules"]
+// }
 
 // {
 //   "compilerOptions": {

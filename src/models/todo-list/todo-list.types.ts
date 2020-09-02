@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "type-graphql";
 
 // ******* entity *******
-import { TodoList } from "../entity/TodoList";
+import { TodoList } from "./todo-list.entity";
 
 @ObjectType("todoListSubscriber")
 export class TodoListSubscriber {

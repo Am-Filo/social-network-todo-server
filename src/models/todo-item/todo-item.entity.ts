@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   ManyToOne,
-  OneToMany,
   BaseEntity,
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -10,12 +9,11 @@ import {
 import { Int, Field, ObjectType } from "type-graphql";
 
 // ******* entity *******
-import { Profile } from "./Profile";
-import { TodoItem } from "./TodoItem";
+import { TodoList } from "../todo-list/todo-list.entity";
 
-@Entity("todoList")
+@Entity("todoItem")
 @ObjectType()
-export class TodoList extends BaseEntity {
+export class TodoItem extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
@@ -24,7 +22,7 @@ export class TodoList extends BaseEntity {
   @Field(() => Int)
   sortID: number;
 
-  @Column("text", { default: "New todo list", nullable: false })
+  @Column("text", { default: "New task...", nullable: false })
   @Field(() => String)
   title: string;
 
@@ -32,22 +30,13 @@ export class TodoList extends BaseEntity {
   @Field(() => String)
   text: string;
 
-  @ManyToOne(() => Profile, (profile) => profile.todos)
-  @Field(() => Profile)
-  profile: Profile;
-
   @Column("boolean", { default: false })
   @Field(() => Boolean)
-  private: boolean;
+  complete: boolean;
 
-  @OneToMany(() => TodoItem, (todoItem) => todoItem.list, {
-    eager: true,
-    cascade: true,
-    onDelete: "CASCADE",
-    nullable: true,
-  })
-  @Field(() => [TodoItem])
-  items: TodoItem[];
+  @ManyToOne(() => TodoList, (todoList) => todoList.items)
+  @Field(() => TodoList)
+  list: TodoList;
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt: Date;

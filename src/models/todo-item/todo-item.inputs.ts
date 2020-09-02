@@ -14,3 +14,12 @@ export class TodoItemInput {
   })
   text: string;
 }
+
+@InputType("reorderTodoItem")
+export class ReorderTodoItemInput {
+  @Field({ nullable: false })
+  id: number;
+
+  @Field({ nullable: false })
+  sort: number;
+}

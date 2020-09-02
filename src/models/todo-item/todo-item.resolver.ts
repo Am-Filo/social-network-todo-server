@@ -10,16 +10,16 @@ import {
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../context";
+import { MyContext } from "../../helpers/context";
 
 // ******* entity *******
-import { User } from "../entity/User";
-import { Profile } from "../entity/Profile";
-import { TodoItem } from "../entity/TodoItem";
-import { TodoList } from "./../entity/TodoList";
+import { User } from "../user/user.entity";
+import { Profile } from "../profile/profile.entity";
+import { TodoItem } from "./todo-item.entity";
+import { TodoList } from "../todo-list/todo-list.entity";
 
 // ******* input *******
-import { TodoItemInput } from "../inputs/TodoItem";
+import { TodoItemInput, ReorderTodoItemInput } from "./todo-item.inputs";
 
 @Resolver(TodoItem)
 export class TodoItemResolver {
@@ -162,7 +162,7 @@ export class TodoItemResolver {
     // @PubSub() pubSub: PubSubEngine,
     @Ctx() { payload }: MyContext,
     @Arg("todoListId") todoListId: number,
-    @Arg("reorderTodoItems") reorderTodoItems: any[]
+    @Arg("reorderTodoItems", () => [ReorderTodoItemInput]) reorderTodoItems: [ReorderTodoItemInput]
   ) {
     const user = await User.findOne(payload!.userId);
 
@@ -210,8 +210,8 @@ export class TodoItemResolver {
     // @PubSub() pubSub: PubSubEngine,
     @Ctx() { payload }: MyContext,
     @Arg("todoListId", () => Number) todoListId: number,
-    @Arg("reorderTodoItems", () => Number) reorderTodoItemId: number,
-    @Arg("reorderTodoItems", () => Number) reorderTodoItemSortId: number
+    @Arg("reorderTodoItemId", () => Number) reorderTodoItemId: number,
+    @Arg("reorderTodoItemSortId", () => Number) reorderTodoItemSortId: number
   ) {
     const user = await User.findOne(payload!.userId);
 

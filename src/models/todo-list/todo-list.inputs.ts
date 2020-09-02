@@ -17,3 +17,12 @@ export class TodoListInput {
   @Field(() => Boolean, { nullable: true })
   private?: boolean;
 }
+
+@InputType("reorderTodoList")
+export class ReorderTodoListInputs {
+  @Field({ nullable: false })
+  id: number;
+
+  @Field({ nullable: false })
+  sort: number;
+}

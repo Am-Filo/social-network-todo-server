@@ -10,7 +10,7 @@ import {
 import { Field, ObjectType } from "type-graphql";
 
 // ******* entity *******
-import { Profile } from "./Profile";
+import { Profile } from "../profile/profile.entity";
 
 @Entity("user")
 @ObjectType()

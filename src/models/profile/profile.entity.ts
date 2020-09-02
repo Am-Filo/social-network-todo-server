@@ -12,9 +12,9 @@ import {
 import { Field, ObjectType } from "type-graphql";
 
 // ******* entity *******
-import { User } from "./User";
-import { Settings } from "./Settings";
-import { TodoList } from "./TodoList";
+import { User } from "../user/user.entity";
+import { Settings } from "../settings/settings.entity";
+import { TodoList } from "../todo-list/todo-list.entity";
 
 @Entity("profile")
 @ObjectType()

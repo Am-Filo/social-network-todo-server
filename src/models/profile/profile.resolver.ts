@@ -8,12 +8,12 @@ import {
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../context";
+import { MyContext } from "../../helpers/context";
 
 // ******* entity *******
-import { User } from "../entity/User";
-import { Profile } from "../entity/Profile";
-import { ProfileInput } from "../inputs/Profile";
+import { User } from "../user/user.entity";
+import { Profile } from "./profile.entity";
+import { ProfileInput } from "./profile.inputs";
 
 @Resolver(Profile)
 export class ProfileResolver {

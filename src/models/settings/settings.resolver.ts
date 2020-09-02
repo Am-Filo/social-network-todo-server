@@ -8,14 +8,14 @@ import {
 } from "type-graphql";
 
 import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../context";
+import { MyContext } from "../../helpers/context";
 
 // ******* entity *******
-import { User } from "../entity/User";
-import { Settings } from "../entity/Settings";
+import { User } from "../user/user.entity";
+import { Settings } from "../settings/settings.entity";
 
 // ******* inputs *******
-import { SettingsInput } from "../inputs/Settings";
+import { SettingsInput } from "./settings.inputs";
 
 @Resolver(Settings)
 export class SettingsResolver {

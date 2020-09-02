@@ -1,10 +1,10 @@
 import { Field, InputType } from "type-graphql";
 
 // ******* entity *******
-import { Settings } from "../entity/Settings";
+import { Settings } from "../settings/settings.entity";
 
 // ******* input *******
-import { SettingsInput } from "./Settings";
+import { SettingsInput } from "../settings/settings.inputs";
 
 @InputType("profile")
 export class ProfileInput {

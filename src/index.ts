@@ -1,10 +1,15 @@
 import "dotenv/config";
 import "reflect-metadata";
 
-import cors from "cors";
-import http from "http";
-import express from "express";
-import cookieParcer from "cookie-parser";
+import cors from "cors"
+import http from "http"
+import express from "express"
+import cookieParcer from 'cookie-parser'
+// import * as cors from "cors"
+// import * as http from "http"
+// import * as express from "express"
+// import * as cookieParcer from 'cookie-parser'
+
 import appRouter from "./routes/app";
 
 import { buildSchema } from "type-graphql";
@@ -12,11 +17,11 @@ import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 
 // ******* resolver *******
-import { UserResolver } from "./app/resolvers/User";
-import { ProfileResolver } from "./app/resolvers/Profile";
-import { SettingsResolver } from "./app/resolvers/Settings";
-import { TodoListResolver } from "./app/resolvers/TodoList";
-import { TodoItemResolver } from "./app/resolvers/TodoItem";
+import { UserResolver } from "./models/user/user.resolver";
+import { ProfileResolver } from "./models/profile/profile.resolver";
+import { SettingsResolver } from "./models/settings/settings.resolver";
+import { TodoListResolver } from "./models/todo-list/todo-list.resolver";
+import { TodoItemResolver } from "./models/todo-item/todo-item.resolver";
 
 const port = process.env.PORT || 4000;
 

@@ -33,6 +33,7 @@
     "node": ">=12"
   },
   "main": "src/index.js",
+  "type": "module",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie-parser": "^1.4.2",
@@ -63,15 +64,8 @@
     "typeorm": "0.2.25"
   },
   "scripts": {
-    "start": "node ./dist/index.js",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "rebuildDB": "dropdb social-network && createdb social-network && npm run dev",
-    "prepare": "npm run gcp-build",
-    "pretest": "npm run gcp-build",
-    "build": "npm run gcp-build",
-    "posttest": "npm run lint",
-    "gcp-build": "tsc -p .",
-    "lint": "tslint -p .",
-    "deploy": "gcloud app deploy"
+    "start": "node --experimental-modules ./dist/index.js",
+    "start:dev": "nodemon",
+    "build": "tsc"
   }
 }
