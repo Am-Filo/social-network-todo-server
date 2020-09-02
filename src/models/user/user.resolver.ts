@@ -11,7 +11,6 @@ import {
   PubSubEngine,
   UseMiddleware,
 } from "type-graphql";
-import { verify } from "jsonwebtoken";
 import { getConnection } from "typeorm";
 import { hash, compare } from "bcryptjs";
 
@@ -82,21 +81,9 @@ export class UserResolver {
 
   // Fetch authorize user information
   @Query(() => User, { nullable: true })
-  me(@Ctx() context: MyContext) {
-    const authorization = context.req.headers.authorization;
-
-    if (!authorization) {
-      return null;
-    }
-
-    try {
-      const token = authorization.split(" ")[1];
-      const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
-      return User.findOne(payload!.userId);
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
+  @UseMiddleware(isAuth)
+  async me(@Ctx() { payload }: MyContext,) {
+    return await User.findOne(payload!.userId);
   }
 
   // ******* mutations *******
