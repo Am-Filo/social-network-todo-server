@@ -1,3 +1,4 @@
+import { Service } from "typedi";
 import {
   Int,
   Arg,
@@ -16,20 +17,30 @@ import { hash, compare } from "bcryptjs";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../helpers/context";
-import { LoginResponse } from "./user.types";
 import { sendRefreshToken } from "../../helpers/sendRefreshToken";
 import { createAccessToken, createRefreshToken } from "../../helpers/auth";
 
-// ******* entity *******
+// ******* entities *******
 import { User } from "./user.entity";
 import { Profile } from "../profile/profile.entity";
 import { Settings } from "../settings/settings.entity";
 
-// ******* input *******
-import { CreateUserInput, EditUserInput } from "./user.inputs";
+// ******* types *******
+import { LoginResponse } from "./user.types";
 
+// ******* services *******
+import { UserService } from './user.service';
+
+// ******* inputs *******
+import { CreateUserInput, EditUserInput, FindUserInput, GetUsersInput } from "./user.inputs";
+
+@Service()
 @Resolver(User)
 export class UserResolver {
+  constructor(
+    private readonly userService: UserService
+  ){}
+
   /**
    * subscribers
    *
@@ -46,43 +57,25 @@ export class UserResolver {
 
   // ******* querys *******
 
-  // ! Remove test
-  @Query(() => String)
-  hello() {
-    return "hi!";
-  }
-
-  // ! Remove protected route by middleware isAuth
-  @Query(() => String)
-  @UseMiddleware(isAuth)
-  secure(@Ctx() { payload }: MyContext) {
-    return `your user id is:${payload!.userId}`;
-  }
-
-  // Fetch all users
+  // Get all users
   @Query(() => [User])
-  users() {
-    return User.find();
+  users(@Arg("filter", () => GetUsersInput) data: GetUsersInput) {
+    return this.userService.getAll(data);
   }
 
-  // Get user by id
-  @Query(() => [User])
-  async findUser(@Arg("id") id?: number, @Arg("email") email?: string) {
-    const findBy = id === 0 ? { email } : { id };
-    const user = await User.find(findBy);
-
-    if (!user || user.length === 0) {
-      throw new Error(`could not find user by ${findBy.id || findBy.email}`);
-    }
-
-    return user;
+  // Get user by id or email
+  @Query(() => User)
+  findUser(
+    @Arg("filter", () => FindUserInput) data: FindUserInput
+  ) {
+    return this.userService.findBy(data);
   }
 
-  // Fetch authorize user information
+  // Get authorize user information
   @Query(() => User, { nullable: true })
   @UseMiddleware(isAuth)
-  async me(@Ctx() { payload }: MyContext,) {
-    return await User.findOne(payload!.userId);
+  me(@Ctx() { payload }: MyContext) {
+    return this.userService.getById(payload!.userId);
   }
 
   // ******* mutations *******
@@ -97,8 +90,6 @@ export class UserResolver {
     if (isExist) throw new Error("this e-mail address has already use");
 
     const hashedPassword = await hash(registerData.password, 12);
-
-    console.log(registerData);
 
     const userSettings = Settings.create(registerData.profile.settings);
     await userSettings.save();
@@ -131,7 +122,7 @@ export class UserResolver {
     @Arg("password") password: string,
     @Ctx() { res }: MyContext
   ): Promise<LoginResponse> {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ email });
 
     if (!user) {
       throw new Error("could not find user");

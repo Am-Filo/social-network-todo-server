@@ -26,6 +26,11 @@ import { SettingsResolver } from "./models/settings/settings.resolver";
 import { TodoListResolver } from "./models/todo-list/todo-list.resolver";
 import { TodoItemResolver } from "./models/todo-item/todo-item.resolver";
 
+import { Container } from "typedi";
+import { UserService } from "./models/user/user.service";
+
+Container.set({ id: "User_Service", factory: () => new UserService() });
+
 const port = process.env.PORT || 4000;
 
 (async () => {
@@ -53,8 +58,9 @@ const port = process.env.PORT || 4000;
         TodoListResolver,
         TodoItemResolver,
       ],
+      container: Container,
     }),
-    context: ({ req, res }) => ({ req, res }),
+    context: ({ req, res }, ) => ({ req, res }),
     subscriptions: {
       path: "/graphql",
       onConnect: async (_connectionParams, _webSocket) => {

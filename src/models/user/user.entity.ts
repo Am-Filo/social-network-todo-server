@@ -5,7 +5,7 @@ import {
   JoinColumn,
   BaseEntity,
   CreateDateColumn,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 
