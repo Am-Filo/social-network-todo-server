@@ -38,6 +38,15 @@ export class FindUserInput {
   email?: string;
 }
 
+@InputType("loginUserInput")
+export class LoginUserInput {
+  @Field(() => String, { nullable: false })
+  email: string;
+
+  @Field(() => String, { nullable: false })
+  password: string;
+}
+
 @InputType("getUsersInput")
 export class GetUsersInput {
   @Field(() => Int, { defaultValue: 0 })

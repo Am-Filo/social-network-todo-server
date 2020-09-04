@@ -13,17 +13,13 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { hash, compare } from "bcryptjs";
 
 import { isAuth } from "../../middleware/isAuth";
 import { MyContext } from "../../helpers/context";
 import { sendRefreshToken } from "../../helpers/sendRefreshToken";
-import { createAccessToken, createRefreshToken } from "../../helpers/auth";
 
 // ******* entities *******
 import { User } from "./user.entity";
-import { Profile } from "../profile/profile.entity";
-import { Settings } from "../settings/settings.entity";
 
 // ******* types *******
 import { LoginResponse } from "./user.types";
@@ -32,7 +28,7 @@ import { LoginResponse } from "./user.types";
 import { UserService } from './user.service';
 
 // ******* inputs *******
-import { CreateUserInput, EditUserInput, FindUserInput, GetUsersInput } from "./user.inputs";
+import { CreateUserInput, EditUserInput, FindUserInput, GetUsersInput, LoginUserInput } from "./user.inputs";
 
 @Service()
 @Resolver(User)
@@ -84,32 +80,13 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async register(
     @PubSub() pubSub: PubSubEngine,
-    @Arg("data", () => CreateUserInput) registerData: CreateUserInput
+    @Arg("data", () => CreateUserInput) data: CreateUserInput
   ) {
-    const isExist = await User.findOne({ where: { email: registerData.email } });
-    if (isExist) throw new Error("this e-mail address has already use");
-
-    const hashedPassword = await hash(registerData.password, 12);
-
-    const userSettings = Settings.create(registerData.profile.settings);
-    await userSettings.save();
-    registerData.profile.settings = userSettings;
-
-    const userProfile = Profile.create(registerData.profile);
-    await userProfile.save();
-
-    const user = User.create({
-      email: registerData.email,
-      password: hashedPassword,
-      profile: userProfile,
-    });
-
     try {
-      await user.save();
-      await pubSub.publish("USERADDED", user);
+      const newUser = await this.userService.createUser(data);
+      await pubSub.publish("USERADDED", newUser);
     } catch (err) {
-      console.log(err);
-      return false;
+      throw err;
     }
 
     return true;
@@ -118,35 +95,16 @@ export class UserResolver {
   // Login
   @Mutation(() => LoginResponse)
   async login(
-    @Arg("email") email: string,
-    @Arg("password") password: string,
+    @Arg("data", () => LoginUserInput) data: LoginUserInput,
     @Ctx() { res }: MyContext
-  ): Promise<LoginResponse> {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      throw new Error("could not find user");
-    }
-
-    const valid = await compare(password, user.password);
-
-    if (!valid) {
-      throw new Error("bad password");
-    }
-
-    sendRefreshToken(res, createRefreshToken(user));
-
-    return {
-      accessToken: createAccessToken(user),
-      user,
-    };
+  ) {
+    return await this.userService.login(data, res);;
   }
 
   // Logout
   @Mutation(() => Boolean)
   async logout(@Ctx() { res }: MyContext) {
     sendRefreshToken(res, "");
-
     return true;
   }
 

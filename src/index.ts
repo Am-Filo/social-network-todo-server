@@ -67,20 +67,6 @@ const port = process.env.PORT || 4000;
         console.log(
           `Subscription client connected using Apollo server's built-in SubscriptionServer.`
         );
-
-        // console.log(connectionParams, webSocket);
-
-        // if (connectionParams.authToken) {
-        //   return validateToken(connectionParams.authToken)
-        //     .then(findUser(connectionParams.authToken))
-        //     .then((user) => {
-        //       return {
-        //         currentUser: user,
-        //       };
-        //     });
-        // }
-
-        // throw new Error("Missing auth token!");
       },
       onDisconnect: async (_webSocket, _context) => {
         console.log(`Subscription client disconnected.`);
