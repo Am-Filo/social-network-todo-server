@@ -1,13 +1,13 @@
-import { Min, Max } from "class-validator";
-import { Field, InputType, Int } from "type-graphql";
+import { Min, Max } from 'class-validator';
+import { Field, InputType, Int } from 'type-graphql';
 
 // ******* entity *******
-import { Profile } from "../profile/profile.entity";
+import { Profile } from '../profile/profile.entity';
 
 // ******* input *******
-import { ProfileInput } from "../profile/profile.inputs";
+import { ProfileInput } from '../profile/profile.inputs';
 
-@InputType("CreateUser")
+@InputType('CreateUser')
 export class CreateUserInput {
   @Field({ nullable: false })
   email: string;
@@ -19,7 +19,16 @@ export class CreateUserInput {
   profile: Profile;
 }
 
-@InputType("EditUser")
+@InputType('DeleteUser')
+export class DeleteUserInput {
+  @Field(() => Int, { nullable: false })
+  id: number;
+
+  @Field(() => String, { nullable: false })
+  email: string;
+}
+
+@InputType('EditUser')
 export class EditUserInput {
   @Field({ nullable: true })
   email?: string;
@@ -28,7 +37,7 @@ export class EditUserInput {
   password?: string;
 }
 
-@InputType("findUserInput")
+@InputType('findUserInput')
 export class FindUserInput {
   @Field(() => Int, { nullable: true })
   @Min(1)
@@ -38,7 +47,7 @@ export class FindUserInput {
   email?: string;
 }
 
-@InputType("loginUserInput")
+@InputType('loginUserInput')
 export class LoginUserInput {
   @Field(() => String, { nullable: false })
   email: string;
@@ -47,7 +56,7 @@ export class LoginUserInput {
   password: string;
 }
 
-@InputType("getUsersInput")
+@InputType('getUsersInput')
 export class GetUsersInput {
   @Field(() => Int, { defaultValue: 0 })
   @Min(0)
