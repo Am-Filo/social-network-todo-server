@@ -31,11 +31,16 @@ import { Container } from 'typedi';
 // ******* service *******
 import { UserService } from './models/user/user.service';
 import { ProfileService } from './models/profile/profile.service';
+import { SettingsService } from './models/settings/settings.service';
 
 Container.set({ id: 'User_Service', factory: () => new UserService() });
 Container.set({
   id: 'Profile_Service',
-  factory: () => new ProfileService(new UserService()),
+  factory: () => new ProfileService(),
+});
+Container.set({
+  id: 'Settings_Service',
+  factory: () => new SettingsService(),
 });
 
 const port = process.env.PORT || 4000;

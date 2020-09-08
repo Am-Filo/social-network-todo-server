@@ -31,8 +31,8 @@ export class EditProfileInput {
   settings?: Settings;
 }
 
-@InputType('finProfileInput')
-export class FinProfileInput {
+@InputType('findProfileInput')
+export class FindProfileInput {
   @Field(() => Int, { nullable: true })
   @Min(1)
   id?: number;

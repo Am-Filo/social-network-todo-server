@@ -11,12 +11,11 @@ import { isAuth } from '../../middleware/isAuth';
 import { MyContext } from '../../helpers/context';
 
 // ******* entity *******
-import { User } from '../user/user.entity';
 import { Profile } from './profile.entity';
 import {
   EditProfileInput,
   GetProfilesInput,
-  FinProfileInput,
+  FindProfileInput,
 } from './profile.inputs';
 
 // ****** service *****
@@ -39,7 +38,7 @@ export class ProfileResolver {
   // Get Profile by id
   @Query(() => Profile)
   async findProfile(
-    @Arg('filter', () => FinProfileInput) data: FinProfileInput
+    @Arg('filter', () => FindProfileInput) data: FindProfileInput
   ) {
     return await this.profileService.findBy(data);
   }
@@ -54,7 +53,7 @@ export class ProfileResolver {
   // ******* mutations *******
 
   // Edit user profile
-  @Mutation(() => User)
+  @Mutation(() => Profile)
   @UseMiddleware(isAuth)
   async editUserProfile(
     @Ctx() { payload }: MyContext,

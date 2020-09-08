@@ -20,9 +20,13 @@ import {
   EditUserInput,
 } from './user.inputs';
 
+// import { ProfileService } from '../profile/profile.service';
+
 @Service()
 @Inject('User_Service')
 export class UserService {
+  // private profileService = new ProfileService();
+
   public getAll = async (data: GetUsersInput) =>
     await User.find({ skip: data.startIndex, take: data.endIndex });
   public getById = async (id: string) => await User.findOne(id);
@@ -79,7 +83,7 @@ export class UserService {
     const dataEdit: EditUserInput = {};
 
     if (data.email) {
-      const userFind = await this.findBy({ email: data.email });
+      const userFind = await this.getByEmail(data.email);
       if (userFind) throw new Error(`this e-mail address already use`);
       dataEdit.email = data.email;
     }

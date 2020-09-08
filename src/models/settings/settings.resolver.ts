@@ -5,102 +5,65 @@ import {
   Resolver,
   Mutation,
   UseMiddleware,
-} from "type-graphql";
+} from 'type-graphql';
 
-import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../../helpers/context";
+import { isAuth } from '../../middleware/isAuth';
+import { MyContext } from '../../helpers/context';
 
 // ******* entity *******
-import { User } from "../user/user.entity";
-import { Settings } from "../settings/settings.entity";
+import { User } from '../user/user.entity';
+import { Settings } from '../settings/settings.entity';
 
 // ******* inputs *******
-import { SettingsInput } from "./settings.inputs";
+import {
+  EditSettingsInput,
+  GetSettingsInput,
+  FindSettingsInput,
+} from './settings.inputs';
+
+// ***** services ******
+import { SettingsService } from './settings.service';
 
 @Resolver(Settings)
 export class SettingsResolver {
-  // ******* querys *******
+  constructor(private readonly settingsService: SettingsService) {}
 
   // Fetch all settings
   @Query(() => [Settings])
-  settings() {
-    return Settings.find({
-      relations: ["profile", "profile.user"],
-    });
+  async settings(
+    @Arg('filter', () => GetSettingsInput) data: GetSettingsInput
+  ) {
+    return this.settingsService.getAll(data);
   }
 
   // Get settings by id
   @Query(() => Settings)
-  async findSettings(@Arg("id") id: number) {
-    const settings = await Settings.find({
-      where: { id },
-    });
-
-    console.log(settings);
-
-    if (!settings || settings.length === 0) {
-      throw new Error(`could not find user setting by settingsId ${id}`);
-    }
-
-    return settings;
+  async findSettings(
+    @Arg('filter', () => FindSettingsInput) data: FindSettingsInput
+  ) {
+    return await this.settingsService.findBy(data);
   }
 
   // Get user settings
   @UseMiddleware(isAuth)
-  @Query(() => Settings, { nullable: true })
+  @Query(() => Settings)
   async findUserSettings(@Ctx() { payload }: MyContext) {
-    const user = await User.findOne(payload!.userId);
-
-    if (!user)
-      throw new Error(`can't find user settings by userId: ${payload!.userId}`);
-
-    return user?.profile.settings ? user?.profile.settings : null;
+    return await this.settingsService.findUserSettings(payload!.userId);
   }
 
   // ******* mutations *******
 
-  // Edit user profile
-  @Mutation(() => Settings, { nullable: true })
+  // Edit user settings
+  @Mutation(() => User)
   @UseMiddleware(isAuth)
   async editUserSettings(
     @Ctx() { payload }: MyContext,
-    @Arg("settings") _settings: SettingsInput
+    @Arg('data', () => EditSettingsInput) data: EditSettingsInput
   ) {
-    const user = await User.findOne(payload!.userId);
-
-    if (!user) throw new Error(`can't find user by userId: ${payload!.userId}`);
-
-    if (!user?.profile.settings.id)
-      throw new Error(`can't find user settings by userId: ${payload!.userId}`);
-
-    const settingsId = user?.profile.settings.id;
-    let settings = await Settings.findOne(settingsId);
-
-    if (!settings)
-      throw new Error(`can't find user settings by settingsId ${settingsId}`);
-
-    Settings.merge(settings, _settings);
-
     try {
-      await Settings.save(settings);
+      return await this.settingsService.editUserSettings(data, payload!.userId);
     } catch (err) {
-      console.log(
-        `can't update user profile (userId: ${payload!.userId}, profileId: ${
-          user.profile.id
-        })`,
-        err
-      );
-      throw new Error(
-        `can't update user profile (userId: ${payload!.userId}, profileId: ${
-          user.profile.id
-        })`
-      );
+      throw err;
     }
-
-    settings = await Settings.findOne(user.profile.id, {
-      relations: ["profile.user"],
-    });
-
-    return settings;
   }
 }

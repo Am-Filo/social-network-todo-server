@@ -6,7 +6,7 @@ import { Profile } from './profile.entity';
 // ******* inputs *******
 import {
   GetProfilesInput,
-  FinProfileInput,
+  FindProfileInput,
   EditProfileInput,
 } from './profile.inputs';
 
@@ -14,16 +14,16 @@ import { UserService } from '../user/user.service';
 @Service()
 @Inject('Profile_Service')
 export class ProfileService {
-  constructor(private userService: UserService) {}
+  private userService: UserService = new UserService();
 
   public getAll = async (data: GetProfilesInput) =>
     await Profile.find({ skip: data.startIndex, take: data.endIndex });
   public getById = async (id: string) => await Profile.findOne(id);
 
-  public async findBy(data: FinProfileInput) {
-    const user = await Profile.findOne(data);
-    if (!user) throw new Error(`profile not found: ${data.id}`);
-    return user;
+  public async findBy(data: FindProfileInput) {
+    const prodile = await Profile.findOne(data);
+    if (!prodile) throw new Error(`profile not found: ${data.id}`);
+    return prodile;
   }
 
   public async findUserPofile(id: string) {
