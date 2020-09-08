@@ -13,7 +13,11 @@ import { MyContext } from '../../helpers/context';
 // ******* entity *******
 import { User } from '../user/user.entity';
 import { Profile } from './profile.entity';
-import { ProfileInput } from './profile.inputs';
+import {
+  EditProfileInput,
+  GetProfilesInput,
+  FinProfileInput,
+} from './profile.inputs';
 
 // ****** service *****
 import { ProfileService } from './profile.service';
@@ -23,80 +27,43 @@ export class ProfileResolver {
   constructor(private readonly profileService: ProfileService) {}
 
   // ******* querys *******
+
   // Fetch all Profiles
   @Query(() => [Profile])
-  async profiles() {
-    console.log(await this.profileService.test('11'));
-
-    return await Profile.find();
+  async profiles(
+    @Arg('filter', () => GetProfilesInput) data: GetProfilesInput
+  ) {
+    return this.profileService.getAll(data);
   }
 
   // Get Profile by id
   @Query(() => Profile)
-  async findProfile(@Arg('id') id: number) {
-    const profile = await Profile.find({
-      where: { id },
-      relations: ['profile.user'],
-    });
-
-    console.log(profile);
-
-    if (!profile || profile.length === 0) {
-      throw new Error(`could not find user by ${id}`);
-    }
-
-    return profile;
+  async findProfile(
+    @Arg('filter', () => FinProfileInput) data: FinProfileInput
+  ) {
+    return await this.profileService.findBy(data);
   }
 
   // Get user Profile
   @UseMiddleware(isAuth)
   @Query(() => Profile)
   async findUserProfile(@Ctx() { payload }: MyContext) {
-    const user = await User.findOne(payload!.userId);
-
-    if (!user)
-      throw new Error(`can't find user profile by userId ${payload!.userId}`);
-
-    return user?.profile ? user?.profile : null;
+    return await this.profileService.findUserPofile(payload!.userId);
   }
 
   // ******* mutations *******
 
   // Edit user profile
-  @Mutation(() => Profile)
+  @Mutation(() => User)
   @UseMiddleware(isAuth)
   async editUserProfile(
     @Ctx() { payload }: MyContext,
-    @Arg('profile') _profile: ProfileInput
+    @Arg('data', () => EditProfileInput) data: EditProfileInput
   ) {
-    const user = await User.findOne(payload!.userId);
-
-    if (!user) throw new Error(`can't find user by ${payload!.userId}`);
-
-    let profile = await Profile.findOne(user.profile.id);
-
-    if (!profile) throw new Error(`can't find profile by ${user.profile.id}`);
-
-    Profile.merge(profile, _profile);
-
     try {
-      await Profile.save(profile);
+      return await this.profileService.editUserProfile(data, payload!.userId);
     } catch (err) {
-      console.log(
-        `can't update user profile (userId: ${payload!.userId}, profileId: ${
-          user.profile.id
-        })`,
-        err
-      );
-      throw new Error(
-        `can't update user profile (userId: ${payload!.userId}, profileId: ${
-          user.profile.id
-        })`
-      );
+      throw err;
     }
-
-    profile = await Profile.findOne(user.profile.id, { relations: ['user'] });
-
-    return profile;
   }
 }

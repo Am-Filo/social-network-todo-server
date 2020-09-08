@@ -33,7 +33,10 @@ import { UserService } from './models/user/user.service';
 import { ProfileService } from './models/profile/profile.service';
 
 Container.set({ id: 'User_Service', factory: () => new UserService() });
-Container.set({ id: 'Profile_Service', factory: () => new ProfileService() });
+Container.set({
+  id: 'Profile_Service',
+  factory: () => new ProfileService(new UserService()),
+});
 
 const port = process.env.PORT || 4000;
 

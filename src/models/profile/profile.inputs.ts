@@ -1,19 +1,61 @@
-import { Field, InputType } from "type-graphql";
+import { Min, Max } from 'class-validator';
+import { Field, InputType, Int } from 'type-graphql';
 
 // ******* entity *******
-import { Settings } from "../settings/settings.entity";
+import { Settings } from '../settings/settings.entity';
 
 // ******* input *******
-import { SettingsInput } from "../settings/settings.inputs";
+import { SettingsInput } from '../settings/settings.inputs';
 
-@InputType("profile")
+@InputType('profileInput')
 export class ProfileInput {
-  @Field({ nullable: true, defaultValue: "user_" + new Date().getTime() })
+  @Field({ nullable: true, defaultValue: 'user_' + new Date().getTime() })
   name?: string;
 
-  @Field({ nullable: true, defaultValue: "placeholder.png" })
+  @Field({ nullable: true, defaultValue: 'placeholder.png' })
   picture?: string;
 
   @Field(() => SettingsInput, { nullable: true })
   settings?: Settings;
+}
+
+@InputType('editProfileInput')
+export class EditProfileInput {
+  @Field({ nullable: true, defaultValue: 'user_' + new Date().getTime() })
+  name?: string;
+
+  @Field({ nullable: true, defaultValue: 'placeholder.png' })
+  picture?: string;
+
+  @Field(() => SettingsInput, { nullable: true })
+  settings?: Settings;
+}
+
+@InputType('finProfileInput')
+export class FinProfileInput {
+  @Field(() => Int, { nullable: true })
+  @Min(1)
+  id?: number;
+}
+
+@InputType('getProfilesInput')
+export class GetProfilesInput {
+  @Field(() => Int, { defaultValue: 0 })
+  @Min(0)
+  skip: number;
+
+  @Field(() => Int)
+  @Min(1)
+  @Max(50)
+  take = 25;
+
+  @Field({ nullable: true })
+  onlineType?: boolean;
+
+  get startIndex(): number {
+    return this.skip;
+  }
+  get endIndex(): number {
+    return this.skip + this.take;
+  }
 }

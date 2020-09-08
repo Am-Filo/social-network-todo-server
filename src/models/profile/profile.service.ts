@@ -1,99 +1,57 @@
-// ? https://github.com/MichalLytek/type-graphql/blob/master/examples/graphql-modules/user/user.service.ts
 import { Service, Inject } from 'typedi';
-// import { hash, compare } from 'bcryptjs';
 
-// import { sendRefreshToken } from '../../helpers/sendRefreshToken';
-// import { createRefreshToken, createAccessToken } from '../../helpers/auth';
-
-// // ******* entities *******
-// import { Profile } from './profile.entity';
-// import { Settings } from '../settings/settings.entity';
+// ******* entities *******
+import { Profile } from './profile.entity';
 
 // ******* inputs *******
-// import {
-//   GetUsersInput,
-//   FindUserInput,
-//   CreateUserInput,
-//   LoginUserInput,
-//   DeleteUserInput,
-//   EditUserInput,
-// } from './user.inputs';
+import {
+  GetProfilesInput,
+  FinProfileInput,
+  EditProfileInput,
+} from './profile.inputs';
 
+import { UserService } from '../user/user.service';
 @Service()
 @Inject('Profile_Service')
 export class ProfileService {
-  public test = async (id: string) => id;
+  constructor(private userService: UserService) {}
 
-  // public getAll = async (data: GetUsersInput) =>
-  //   await User.find({ skip: data.startIndex, take: data.endIndex });
-  // public getById = async (id: string) => await User.findOne(id);
-  // public getByEmail = async (email: string) => await User.findOne({ email });
-  // public isExist = async (data: FindUserInput) => !!(await User.findOne(data));
-  // public findBy = async (data: FindUserInput) => await User.findOne(data);
-  // public async findBy(data: FindUserInput) {
-  //   const user = await User.findOne(data);
-  //   if (!user) throw new Error(`user not found: ${data.id || data.email}`);
-  //   return user;
-  // }
-  // public async createUser(data: CreateUserInput) {
-  //   if (!data)
-  //     throw new Error(`please provide all user inputs: email and password`);
-  //   const userExist = await this.isExist({ email: data.email });
-  //   if (userExist) throw new Error('this e-mail address has already use');
-  //   const hashedPassword = await hash(data.password, 12);
-  //   const userSettings = Settings.create(data.profile.settings);
-  //   await userSettings.save();
-  //   data.profile.settings = userSettings;
-  //   const userProfile = Profile.create(data.profile);
-  //   await userProfile.save();
-  //   const user = User.create({
-  //     email: data.email,
-  //     password: hashedPassword,
-  //     profile: userProfile,
-  //   });
-  //   try {
-  //     await user.save();
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  //   return user;
-  // }
-  // public async editUser(data: EditUserInput, id: string) {
-  //   if (!data)
-  //     throw new Error(`please provide all users fields: email and password`);
-  //   let user = await this.getById(id);
-  //   if (!user) throw new Error(`can't find user with id: ${id}`);
-  //   const dataEdit: EditUserInput = {};
-  //   if (data.email) {
-  //     const userFind = await this.findBy({ email: data.email });
-  //     if (userFind) throw new Error(`this e-mail address already use`);
-  //     dataEdit.email = data.email;
-  //   }
-  //   if (data.password) {
-  //     const valid = await compare(data.password, user.password);
-  //     if (valid) throw new Error(`don't use the same passwords`);
-  //     dataEdit.password = await hash(data.password, 12);
-  //   }
-  //   User.merge(user, dataEdit);
-  //   try {
-  //     user = await User.save(user);
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  //   return user;
-  // }
-  // public async deleteUser(data: DeleteUserInput) {
-  //   if (!data) throw new Error(`please provide all user inputs: id and email`);
-  //   const userExist = await this.isExist({ id: data.id });
-  //   if (!userExist)
-  //     throw new Error(
-  //       `can't find user with id: ${data.id} & email ${data.email}`
-  //     );
-  //   try {
-  //     await User.delete(data.id);
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  //   return true;
-  // }
+  public getAll = async (data: GetProfilesInput) =>
+    await Profile.find({ skip: data.startIndex, take: data.endIndex });
+  public getById = async (id: string) => await Profile.findOne(id);
+
+  public async findBy(data: FinProfileInput) {
+    const user = await Profile.findOne(data);
+    if (!user) throw new Error(`profile not found: ${data.id}`);
+    return user;
+  }
+
+  public async findUserPofile(id: string) {
+    const user = await this.userService.getById(id);
+    if (!user) throw new Error(`user not found: ${id}`);
+    return user.profile ? user.profile : null;
+  }
+
+  public create(data?: any) {
+    return data ? Profile.create(data.profile) : Profile.create();
+  }
+
+  public async editUserProfile(data: EditProfileInput, id: string) {
+    const user = await this.userService.getById(id);
+
+    if (!user) throw new Error(`can't find user by ${id}`);
+
+    let profile = await this.getById(user.profile.id.toString());
+
+    if (!profile) throw new Error(`can't find profile by ${user.profile.id}`);
+
+    Profile.merge(profile, data);
+
+    try {
+      profile = await Profile.save(profile);
+    } catch (err) {
+      throw err;
+    }
+    return profile;
+  }
 }

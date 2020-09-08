@@ -28,7 +28,6 @@ export class UserService {
   public getById = async (id: string) => await User.findOne(id);
   public getByEmail = async (email: string) => await User.findOne({ email });
   public isExist = async (data: FindUserInput) => !!(await User.findOne(data));
-  // public findBy = async (data: FindUserInput) => await User.findOne(data);
 
   public async findBy(data: FindUserInput) {
     const user = await User.findOne(data);
