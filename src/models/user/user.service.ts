@@ -23,38 +23,18 @@ import {
 @Service()
 @Inject('User_Service')
 export class UserService {
-  // public getAll(data: GetUsersInput) {
-  //   return User.find({ skip: data.startIndex, take: data.endIndex });
-  // }
-
-  // public async getById(id: string) {
-  //   return await User.findOne(id);
-  // }
-
-  // public getByEmail(email: string) {
-  //   return User.findOne({ email });
-  // }
-
   public getAll = async (data: GetUsersInput) =>
     await User.find({ skip: data.startIndex, take: data.endIndex });
   public getById = async (id: string) => await User.findOne(id);
   public getByEmail = async (email: string) => await User.findOne({ email });
+  public isExist = async (data: FindUserInput) => !!(await User.findOne(data));
+  // public findBy = async (data: FindUserInput) => await User.findOne(data);
 
   public async findBy(data: FindUserInput) {
-    if (!data) throw new Error(`please provide user email or id`);
-
-    const user = await User.find(data);
-    if (!user || user.length === 0) throw new Error(`user not found: ${data}`);
+    const user = await User.findOne(data);
+    if (!user) throw new Error(`user not found: ${data.id || data.email}`);
 
     return user;
-  }
-
-  public async isExist(data: FindUserInput) {
-    if (!data) throw new Error(`please provide user email or id`);
-
-    const isExist = await User.findOne(data);
-
-    return !!isExist;
   }
 
   public async createUser(data: CreateUserInput) {

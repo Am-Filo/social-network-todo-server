@@ -66,8 +66,8 @@ export class UserResolver {
 
   // Get user by id or email
   @Query(() => User)
-  findUser(@Arg('filter', () => FindUserInput) data: FindUserInput) {
-    return this.userService.findBy(data);
+  async findUser(@Arg('filter', () => FindUserInput) data: FindUserInput) {
+    return await this.userService.findBy(data);
   }
 
   // Get authorize user information
@@ -88,11 +88,10 @@ export class UserResolver {
     try {
       const newUser = await this.userService.createUser(data);
       await pubSub.publish('USERADDED', newUser);
+      return !!newUser;
     } catch (err) {
       throw err;
     }
-
-    return true;
   }
 
   // Edit user
@@ -113,12 +112,10 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async deleteUser(@Arg('data', () => DeleteUserInput) data: DeleteUserInput) {
     try {
-      await this.userService.deleteUser(data);
+      return !!(await this.userService.deleteUser(data));
     } catch (err) {
       throw err;
     }
-
-    return true;
   }
 
   // Login
