@@ -5,34 +5,38 @@ import {
   Resolver,
   Mutation,
   UseMiddleware,
-} from "type-graphql";
+} from 'type-graphql';
 
-import { isAuth } from "../../middleware/isAuth";
-import { MyContext } from "../../helpers/context";
+import { isAuth } from '../../middleware/isAuth';
+import { MyContext } from '../../helpers/context';
 
 // ******* entity *******
-import { User } from "../user/user.entity";
-import { Profile } from "./profile.entity";
-import { ProfileInput } from "./profile.inputs";
+import { User } from '../user/user.entity';
+import { Profile } from './profile.entity';
+import { ProfileInput } from './profile.inputs';
+
+// ****** service *****
+import { ProfileService } from './profile.service';
 
 @Resolver(Profile)
 export class ProfileResolver {
-  // ******* querys *******
+  constructor(private readonly profileService: ProfileService) {}
 
+  // ******* querys *******
   // Fetch all Profiles
   @Query(() => [Profile])
-  profiles() {
-    return Profile.find({
-      relations: ["user"],
-    });
+  async profiles() {
+    console.log(await this.profileService.test('11'));
+
+    return await Profile.find();
   }
 
   // Get Profile by id
   @Query(() => Profile)
-  async findProfile(@Arg("id") id: number) {
+  async findProfile(@Arg('id') id: number) {
     const profile = await Profile.find({
       where: { id },
-      relations: ["profile.user"],
+      relations: ['profile.user'],
     });
 
     console.log(profile);
@@ -63,7 +67,7 @@ export class ProfileResolver {
   @UseMiddleware(isAuth)
   async editUserProfile(
     @Ctx() { payload }: MyContext,
-    @Arg("profile") _profile: ProfileInput
+    @Arg('profile') _profile: ProfileInput
   ) {
     const user = await User.findOne(payload!.userId);
 
@@ -91,7 +95,7 @@ export class ProfileResolver {
       );
     }
 
-    profile = await Profile.findOne(user.profile.id, { relations: ["user"] });
+    profile = await Profile.findOne(user.profile.id, { relations: ['user'] });
 
     return profile;
   }

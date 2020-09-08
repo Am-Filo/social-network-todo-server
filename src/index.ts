@@ -1,35 +1,39 @@
 // import "dotenv/config";
-import "reflect-metadata";
+import 'reflect-metadata';
 
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
 
-import cors from "cors"
-import http from "http"
-import express from "express"
-import cookieParcer from 'cookie-parser'
+import cors from 'cors';
+import http from 'http';
+import express from 'express';
+import cookieParcer from 'cookie-parser';
 // import * as cors from "cors"
 // import * as http from "http"
 // import * as express from "express"
 // import * as cookieParcer from 'cookie-parser'
 
-import appRouter from "./routes/app";
+import appRouter from './routes/app';
 
-import { buildSchema } from "type-graphql";
-import { ApolloServer } from "apollo-server-express";
-import { createConnection } from "typeorm";
+import { buildSchema } from 'type-graphql';
+import { ApolloServer } from 'apollo-server-express';
+import { createConnection } from 'typeorm';
 
 // ******* resolver *******
-import { UserResolver } from "./models/user/user.resolver";
-import { ProfileResolver } from "./models/profile/profile.resolver";
-import { SettingsResolver } from "./models/settings/settings.resolver";
-import { TodoListResolver } from "./models/todo-list/todo-list.resolver";
-import { TodoItemResolver } from "./models/todo-item/todo-item.resolver";
+import { UserResolver } from './models/user/user.resolver';
+import { ProfileResolver } from './models/profile/profile.resolver';
+import { SettingsResolver } from './models/settings/settings.resolver';
+import { TodoListResolver } from './models/todo-list/todo-list.resolver';
+import { TodoItemResolver } from './models/todo-item/todo-item.resolver';
 
-import { Container } from "typedi";
-import { UserService } from "./models/user/user.service";
+import { Container } from 'typedi';
 
-Container.set({ id: "User_Service", factory: () => new UserService() });
+// ******* service *******
+import { UserService } from './models/user/user.service';
+import { ProfileService } from './models/profile/profile.service';
+
+Container.set({ id: 'User_Service', factory: () => new UserService() });
+Container.set({ id: 'Profile_Service', factory: () => new ProfileService() });
 
 const port = process.env.PORT || 4000;
 
@@ -38,14 +42,14 @@ const port = process.env.PORT || 4000;
 
   app.use(
     cors({
-      origin: "http://localhost:8080",
+      origin: 'http://localhost:8080',
       credentials: true,
     })
   );
 
   app.use(cookieParcer());
 
-  app.use("/", appRouter);
+  app.use('/', appRouter);
 
   await createConnection();
 
@@ -60,9 +64,9 @@ const port = process.env.PORT || 4000;
       ],
       container: Container,
     }),
-    context: ({ req, res }, ) => ({ req, res }),
+    context: ({ req, res }) => ({ req, res }),
     subscriptions: {
-      path: "/graphql",
+      path: '/graphql',
       onConnect: async (_connectionParams, _webSocket) => {
         console.log(
           `Subscription client connected using Apollo server's built-in SubscriptionServer.`
