@@ -8,6 +8,7 @@ import {
   GetSettingsInput,
   FindSettingsInput,
   EditSettingsInput,
+  CreateSettingsInput,
 } from './settings.inputs';
 
 import { UserService } from '../user/user.service';
@@ -34,8 +35,8 @@ export class SettingsService {
     return user.profile.settings ? user.profile.settings : null;
   }
 
-  public create(data?: any) {
-    return data ? Settings.create(data.settings) : Settings.create();
+  public create(data?: CreateSettingsInput) {
+    return data ? Settings.create(data) : Settings.create();
   }
 
   public async editUserSettings(data: EditSettingsInput, id: string) {

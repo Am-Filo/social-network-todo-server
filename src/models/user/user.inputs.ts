@@ -5,7 +5,7 @@ import { Field, InputType, Int } from 'type-graphql';
 import { Profile } from '../profile/profile.entity';
 
 // ******* input *******
-import { ProfileInput } from '../profile/profile.inputs';
+import { CreateProfileInput } from '../profile/profile.inputs';
 
 @InputType('CreateUser')
 export class CreateUserInput {
@@ -15,7 +15,7 @@ export class CreateUserInput {
   @Field({ nullable: false })
   password: string;
 
-  @Field(() => ProfileInput, { nullable: true })
+  @Field(() => CreateProfileInput, { nullable: true })
   profile: Profile;
 }
 

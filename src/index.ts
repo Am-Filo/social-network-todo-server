@@ -15,6 +15,7 @@ import cookieParcer from 'cookie-parser';
 
 import appRouter from './routes/app';
 
+import { Container } from 'typedi';
 import { buildSchema } from 'type-graphql';
 import { ApolloServer } from 'apollo-server-express';
 import { createConnection } from 'typeorm';
@@ -25,23 +26,6 @@ import { ProfileResolver } from './models/profile/profile.resolver';
 import { SettingsResolver } from './models/settings/settings.resolver';
 import { TodoListResolver } from './models/todo-list/todo-list.resolver';
 import { TodoItemResolver } from './models/todo-item/todo-item.resolver';
-
-import { Container } from 'typedi';
-
-// ******* service *******
-import { UserService } from './models/user/user.service';
-import { ProfileService } from './models/profile/profile.service';
-import { SettingsService } from './models/settings/settings.service';
-
-Container.set({ id: 'User_Service', factory: () => new UserService() });
-Container.set({
-  id: 'Profile_Service',
-  factory: () => new ProfileService(),
-});
-Container.set({
-  id: 'Settings_Service',
-  factory: () => new SettingsService(),
-});
 
 const port = process.env.PORT || 4000;
 
@@ -76,11 +60,13 @@ const port = process.env.PORT || 4000;
     subscriptions: {
       path: '/graphql',
       onConnect: async (_connectionParams, _webSocket) => {
+        // tslint:disable-next-line: no-console
         console.log(
           `Subscription client connected using Apollo server's built-in SubscriptionServer.`
         );
       },
       onDisconnect: async (_webSocket, _context) => {
+        // tslint:disable-next-line: no-console
         console.log(`Subscription client disconnected.`);
       },
     },
@@ -92,9 +78,11 @@ const port = process.env.PORT || 4000;
   apolloServer.installSubscriptionHandlers(httpServer);
 
   httpServer.listen(port, () => {
+    // tslint:disable-next-line: no-console
     console.log(
       `🚀 Server ready at http://localhost:${port}${apolloServer.graphqlPath}`
     );
+    // tslint:disable-next-line: no-console
     console.log(
       `🚀 Subscriptions ready at ws://localhost:${port}${apolloServer.subscriptionsPath}`
     );

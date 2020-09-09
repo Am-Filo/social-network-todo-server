@@ -1,8 +1,8 @@
 import { Min, Max } from 'class-validator';
 import { Field, InputType, Int } from 'type-graphql';
 
-@InputType('settingsInput')
-export class SettingsInput {
+@InputType('createSettingsInput')
+export class CreateSettingsInput {
   @Field({ nullable: true, defaultValue: 'white' })
   colorScheme: string;
 
@@ -10,6 +10,18 @@ export class SettingsInput {
   language: string;
 
   @Field(() => Boolean, { nullable: true, defaultValue: true })
+  private?: boolean;
+}
+
+@InputType('settingsInput')
+export class SettingsInput {
+  @Field({ nullable: true })
+  colorScheme: string;
+
+  @Field({ nullable: true })
+  language: string;
+
+  @Field(() => Boolean, { nullable: true })
   private?: boolean;
 }
 

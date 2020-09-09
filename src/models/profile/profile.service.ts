@@ -8,6 +8,7 @@ import {
   GetProfilesInput,
   FindProfileInput,
   EditProfileInput,
+  CreateProfileInput,
 } from './profile.inputs';
 
 import { UserService } from '../user/user.service';
@@ -32,8 +33,9 @@ export class ProfileService {
     return user.profile ? user.profile : null;
   }
 
-  public create(data?: any) {
-    return data ? Profile.create(data.profile) : Profile.create();
+  public async create(data?: CreateProfileInput) {
+    const profile = data ? Profile.create(data) : Profile.create();
+    return await profile.save();
   }
 
   public async editUserProfile(data: EditProfileInput, id: string) {

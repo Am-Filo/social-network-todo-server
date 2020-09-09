@@ -5,11 +5,26 @@ import { Field, InputType, Int } from 'type-graphql';
 import { Settings } from '../settings/settings.entity';
 
 // ******* input *******
-import { SettingsInput } from '../settings/settings.inputs';
+import {
+  CreateSettingsInput,
+  SettingsInput,
+} from '../settings/settings.inputs';
+
+@InputType('createProfileInput')
+export class CreateProfileInput {
+  @Field({ nullable: true, defaultValue: 'user_' + new Date().getTime() })
+  name?: string;
+
+  @Field({ nullable: true, defaultValue: 'placeholder.png' })
+  picture?: string;
+
+  @Field(() => CreateSettingsInput, { nullable: true })
+  settings?: Settings;
+}
 
 @InputType('profileInput')
 export class ProfileInput {
-  @Field({ nullable: true, defaultValue: 'user_' + new Date().getTime() })
+  @Field({ nullable: true })
   name?: string;
 
   @Field({ nullable: true, defaultValue: 'placeholder.png' })

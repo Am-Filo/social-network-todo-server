@@ -5,29 +5,29 @@ import {
   JoinColumn,
   BaseEntity,
   CreateDateColumn,
-  PrimaryGeneratedColumn
-} from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Field, ObjectType } from 'type-graphql';
 
 // ******* entity *******
-import { Profile } from "../profile/profile.entity";
+import { Profile } from '../profile/profile.entity';
 
-@Entity("user")
+@Entity('user')
 @ObjectType()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Number)
   id: number;
 
-  @Column("text")
+  @Column('text', { unique: true })
   @Field(() => String)
   email: string;
 
-  @Column("text")
+  @Column('text')
   @Field(() => String)
   password: string;
 
-  @Column("int", { default: 0 })
+  @Column('int', { default: 0 })
   tokenVersion: number;
 
   @OneToOne(() => Profile, (profile) => profile.user, {
@@ -38,12 +38,12 @@ export class User extends BaseEntity {
   @Field(() => Profile)
   profile: Profile;
 
-  @Column("boolean", { default: false })
+  @Column('boolean', { default: false })
   confirm: boolean;
 
-  @CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }
